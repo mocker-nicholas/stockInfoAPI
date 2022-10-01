@@ -7,11 +7,11 @@ namespace stockInfoApi.Models.DboModels
     {
         [Key]
         [JsonProperty("transactionId")]
-        public Guid TransactionId { get; } = Guid.NewGuid();
+        public Guid TransactionId { get; set; } = Guid.NewGuid();
 
-        [Required]
-        [JsonProperty("accountId")]
-        public AccountDbo? AccountId { get; set; }
+        //[Required]
+        //[JsonProperty("accountId")]
+        //public AccountDbo? AccountId { get; set; }
 
         [Required]
         [JsonProperty("symbol")]

@@ -15,11 +15,19 @@ namespace stockInfoApi.Controllers
         }
 
         [HttpGet("{symbol}")]
-        public async Task<QuoteDto> GetQuote(string symbol)
+        public async Task<QuoteResultDto> GetQuote(string symbol)
         {
+            try
+            {
             var request = new ServicesHelper(_config);
             var result = await request.NewQuote(symbol);
-            return result;
+            var response = new QuoteResultDto("success", "success", result);
+            return response;
+            }
+            catch
+            {
+                throw new Exception();
+            }
         }
     }
 }

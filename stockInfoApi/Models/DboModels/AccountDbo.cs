@@ -6,10 +6,9 @@ namespace stockInfoApi.Models.DboModels
 {
     public class AccountDbo
     {
-        [Key]
-        [Required]
         [JsonProperty("accountId")]
-        public Guid AccountId { get; } = Guid.NewGuid();
+        [Key]
+        public Guid AccountId { get; set; } = Guid.NewGuid();
 
         [Required]
         [JsonProperty("accountType")]
@@ -38,5 +37,20 @@ namespace stockInfoApi.Models.DboModels
 
         [JsonProperty("transactions")]
         public List<TransactionDbo>? Transactions { get; set; }
+
+        public AccountDbo(
+            AccountType accountType, 
+            string firstName, 
+            string lastName, 
+            string emailAddress, 
+            string nickname
+            )
+        {
+            AccountType = accountType;
+            FirstName = firstName;
+            LastName = lastName;
+            EmailAddress = emailAddress;
+            Nickname = nickname;
+        }
     }
 }
