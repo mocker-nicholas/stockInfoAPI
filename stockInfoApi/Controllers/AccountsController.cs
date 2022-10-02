@@ -57,6 +57,13 @@ namespace stockInfoApi.Controllers
             {
                 return NotFound(new { Error = "Account was not found" });
             }
+
+            var emailIsValid = Validations.ValidEmail(putAccountDto.EmailAddress);
+            if (!emailIsValid)
+            {
+                return BadRequest(new ErrorMessageDto("invalid Email address"));
+            }
+
             account.AccountType = putAccountDto.AccountType;
             account.FirstName = putAccountDto.FirstName;
             account.LastName = putAccountDto.LastName;
@@ -99,6 +106,12 @@ namespace stockInfoApi.Controllers
             if(!isValid)
             {
                 return BadRequest(new ErrorMessageDto("Invalid account type"));
+            }
+
+            var emailIsValid = Validations.ValidEmail(postAccountDto.EmailAddress);
+            if (!emailIsValid)
+            {
+                return BadRequest(new ErrorMessageDto("invalid Email address"));
             }
 
             var newAccount = new AccountDbo(

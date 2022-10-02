@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace stockInfoApi.Helpers
+﻿namespace stockInfoApi.Helpers
 {
     public class Enums
     {
