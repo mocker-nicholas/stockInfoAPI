@@ -1,11 +1,13 @@
-﻿namespace stockInfoApi.Helpers
+﻿using System.ComponentModel;
+
+namespace stockInfoApi.Helpers
 {
     public class Enums
     {
        public enum AccountType
         {
-            Admin,
-            Standard,
+            Admin = 0,
+            Standard = 1,
         }
 
         public enum TransactionType
@@ -13,6 +15,11 @@
             Buy,
             Sell,
             Limit,
+        }
+
+        public static bool AccountTypeIsValid(int num)
+        {
+            return Enum.TryParse(Enum.GetName(typeof(AccountType), num), true, out AccountType accountType);
         }
     }
 }

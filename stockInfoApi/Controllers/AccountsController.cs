@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using stockInfoApi.Data;
+using stockInfoApi.Helpers;
 using stockInfoApi.Models.AccountDtos;
 using stockInfoApi.Models.DboModels;
+using stockInfoApi.Models.ErrorDtos;
 
 namespace stockInfoApi.Controllers
 {
@@ -32,7 +34,9 @@ namespace stockInfoApi.Controllers
 
             if (accountDbo == null)
             {
-                return NotFound();
+                return NotFound(
+                    new ErrorMessageDto($"No account was found for accountId: {id}")
+                    );
             }
 
             return accountDbo;
@@ -42,6 +46,12 @@ namespace stockInfoApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAccount(Guid id, PutAccountDto putAccountDto)
         {
+            var isValid = Enums.AccountTypeIsValid((int)putAccountDto.AccountType);
+            if (!isValid)
+            {
+                return BadRequest(new ErrorMessageDto("Invalid account type"));
+            }
+
             var account = await _context.Accounts.FindAsync(id);
             if(account == null)
             {
@@ -79,6 +89,18 @@ namespace stockInfoApi.Controllers
         [HttpPost]
         public async Task<ActionResult<AccountDbo>> PostAccountDbo(PostAccountDto postAccountDto)
         {
+            var existingAccount = AccountAlreadyExists(postAccountDto.EmailAddress);
+            if (existingAccount)
+            {
+                return BadRequest(new ErrorMessageDto("Account already exists"));
+            }
+
+            var isValid = Enums.AccountTypeIsValid((int)postAccountDto.AccountType);
+            if(!isValid)
+            {
+                return BadRequest(new ErrorMessageDto("Invalid account type"));
+            }
+
             var newAccount = new AccountDbo(
                 postAccountDto.AccountType,
                 postAccountDto.FirstName,
@@ -89,7 +111,11 @@ namespace stockInfoApi.Controllers
             _context.Accounts.Add(newAccount);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAccountDbo", new { id = newAccount.AccountId }, newAccount);
+            return CreatedAtAction(
+                "GetAccountDbo", 
+                new { id = newAccount.AccountId }, 
+                newAccount
+                );
         }
 
         // DELETE: api/AccountDboes/5
@@ -105,12 +131,21 @@ namespace stockInfoApi.Controllers
             _context.Accounts.Remove(accountDbo);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new SuccessMessageDto($"Account: {id} was successfully deleted"));
         }
 
         private bool AccountDboExists(Guid id)
         {
             return _context.Accounts.Any(e => e.AccountId == id);
+        }
+
+        private bool AccountAlreadyExists(string email)
+        {
+            var existingAccount = _context.Accounts
+                .Where(a => a.EmailAddress.Equals(email));
+            if (existingAccount.Any())
+                return true;
+            return false;
         }
     }
 }

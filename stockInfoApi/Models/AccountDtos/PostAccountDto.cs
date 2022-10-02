@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using stockInfoApi.Data;
 using System.ComponentModel.DataAnnotations;
 using static stockInfoApi.Helpers.Enums;
 
