@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
 using stockInfoApi.Data;
 using stockInfoApi.Helpers;
@@ -47,30 +46,16 @@ namespace stockInfoApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAccount(Guid id, PutAccountDto putAccountDto)
         {
-            var isValid = Enums.AccountTypeIsValid((int)putAccountDto.AccountType);
-            if (!isValid)
+            var validDto = DtoValidations.ValidPutAccountDto(putAccountDto);
+            if(validDto.Error)
             {
-                return BadRequest(new ErrorMessageDto("Invalid account type"));
-            }
-
-            var nicknameIsValid = Validations.ValidNickname(putAccountDto.Nickname);
-            if (!nicknameIsValid)
-            {
-                return BadRequest(
-                    new ErrorMessageDto("Nickname can only contain numbers and letters")
-                    );
+                return BadRequest(new ErrorMessageDto($"{validDto.Message}"));
             }
 
             var account = await _context.Accounts.FindAsync(id);
             if(account == null)
             {
                 return NotFound(new ErrorMessageDto("Account was not found"));
-            }
-
-            var emailIsValid = Validations.ValidEmail(putAccountDto.EmailAddress);
-            if (!emailIsValid)
-            {
-                return BadRequest(new ErrorMessageDto("invalid Email address"));
             }
 
             account.AccountType = putAccountDto.AccountType;
@@ -105,24 +90,17 @@ namespace stockInfoApi.Controllers
         [HttpPost]
         public async Task<ActionResult<AccountDbo>> PostAccountDbo(PostAccountDto postAccountDto)
         {
+            var validDto = DtoValidations.ValidPostAccountDto(postAccountDto);
+            if (validDto.Error)
+            {
+                return BadRequest(new ErrorMessageDto($"{validDto.Message}"));
+            }
+
             var existingAccount = AccountAlreadyExists(postAccountDto.EmailAddress);
             if (existingAccount)
             {
                 return BadRequest(new ErrorMessageDto("Account already exists"));
             }
-
-            var isValid = Enums.AccountTypeIsValid((int)postAccountDto.AccountType);
-            if(!isValid)
-            {
-                return BadRequest(new ErrorMessageDto("Invalid account type"));
-            }
-
-            var emailIsValid = Validations.ValidEmail(postAccountDto.EmailAddress);
-            if (!emailIsValid)
-            {
-                return BadRequest(new ErrorMessageDto("invalid Email address"));
-            }
-
             var newAccount = new AccountDbo(
                 postAccountDto.AccountType,
                 postAccountDto.FirstName,
@@ -147,7 +125,7 @@ namespace stockInfoApi.Controllers
             var accountDbo = await _context.Accounts.FindAsync(id);
             if (accountDbo == null)
             {
-                return NotFound();
+                return NotFound(new ErrorMessageDto($"No account was found for id: {id}");
             }
 
             _context.Accounts.Remove(accountDbo);
