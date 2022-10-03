@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
 using stockInfoApi.Data;
 using stockInfoApi.Helpers;
@@ -52,10 +53,18 @@ namespace stockInfoApi.Controllers
                 return BadRequest(new ErrorMessageDto("Invalid account type"));
             }
 
+            var nicknameIsValid = Validations.ValidNickname(putAccountDto.Nickname);
+            if (!nicknameIsValid)
+            {
+                return BadRequest(
+                    new ErrorMessageDto("Nickname can only contain numbers and letters")
+                    );
+            }
+
             var account = await _context.Accounts.FindAsync(id);
             if(account == null)
             {
-                return NotFound(new { Error = "Account was not found" });
+                return NotFound(new ErrorMessageDto("Account was not found"));
             }
 
             var emailIsValid = Validations.ValidEmail(putAccountDto.EmailAddress);
