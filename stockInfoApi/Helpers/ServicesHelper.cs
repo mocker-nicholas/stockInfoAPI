@@ -26,5 +26,7 @@ namespace stockInfoApi.Helpers
                 return new QuoteDto();
             }
         }
+
+        public async Task 
     }
 }

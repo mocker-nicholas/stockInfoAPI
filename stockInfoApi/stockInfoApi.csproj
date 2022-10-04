@@ -23,7 +23,6 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Migrations\" />
     <Folder Include="Models\TransactionDto\" />
-    <Folder Include="Models\StockDto\" />
   </ItemGroup>
 
 </Project>

@@ -125,7 +125,7 @@ namespace stockInfoApi.Controllers
             var accountDbo = await _context.Accounts.FindAsync(id);
             if (accountDbo == null)
             {
-                return NotFound(new ErrorMessageDto($"No account was found for id: {id}");
+                return NotFound(new ErrorMessageDto($"No account was found for id: {id}"));
             }
 
             _context.Accounts.Remove(accountDbo);

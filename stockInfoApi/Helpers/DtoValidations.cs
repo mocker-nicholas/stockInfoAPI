@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace stockInfoApi.Helpers
 {
-    public class Validations
+    public class DtoValidations
     {
         public static ValidationCheck ValidPutAccountDto (PutAccountDto req)
         {
