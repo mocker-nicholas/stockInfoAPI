@@ -42,7 +42,7 @@ namespace stockInfoApi.Controllers
             return accountDbo;
         }
 
-        // PUT: api/Account/5
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAccount(Guid id, PutAccountDto putAccountDto)
         {
@@ -64,7 +64,7 @@ namespace stockInfoApi.Controllers
             account.EmailAddress = putAccountDto.EmailAddress;
             account.Nickname = putAccountDto.Nickname;
 
-            // How the Heck does this thing know which account I am talking about?
+            
             _context.Entry(account).State = EntityState.Modified;
 
             try
