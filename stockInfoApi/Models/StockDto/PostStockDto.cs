@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
+using stockInfoApi.Models.DboModels;
 using System.ComponentModel.DataAnnotations;
 
-namespace stockInfoApi.Models.DboModels
+namespace stockInfoApi.Models.StockDto
 {
-    public class StockDbo
+    public class PostStockDto
     {
         [Key]
         [JsonProperty("stockId")]
@@ -11,7 +12,7 @@ namespace stockInfoApi.Models.DboModels
 
         [Required]
         [JsonProperty("accountId")]
-        public AccountDbo? AccountId { get; set; }
+        public Guid AccountId { get; set; }
 
         [Required]
         [JsonProperty("symbol")]
