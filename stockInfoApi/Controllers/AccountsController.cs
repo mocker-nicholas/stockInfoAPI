@@ -107,7 +107,7 @@ namespace stockInfoApi.Controllers
                 postAccountDto.LastName,
                 postAccountDto.EmailAddress,
                 postAccountDto.Nickname
-                );
+             );
             _context.Accounts.Add(newAccount);
             await _context.SaveChangesAsync();
 
@@ -115,7 +115,7 @@ namespace stockInfoApi.Controllers
                 "GetAccountDbo", 
                 new { id = newAccount.AccountId }, 
                 newAccount
-                );
+             );
         }
 
         // DELETE: api/AccountDboes/5

@@ -28,8 +28,9 @@ namespace stockInfoApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AccountType")
-                        .HasColumnType("int");
+                    b.Property<string>("AccountType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmailAddress")
                         .IsRequired()
@@ -58,7 +59,7 @@ namespace stockInfoApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AccountDboAccountId")
+                    b.Property<Guid>("AccountId1")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("NumShares")
@@ -76,7 +77,7 @@ namespace stockInfoApi.Migrations
 
                     b.HasKey("StockId");
 
-                    b.HasIndex("AccountDboAccountId");
+                    b.HasIndex("AccountId1");
 
                     b.ToTable("Stocks");
                 });
@@ -112,9 +113,13 @@ namespace stockInfoApi.Migrations
 
             modelBuilder.Entity("stockInfoApi.Models.DboModels.StockDbo", b =>
                 {
-                    b.HasOne("stockInfoApi.Models.DboModels.AccountDbo", null)
+                    b.HasOne("stockInfoApi.Models.DboModels.AccountDbo", "AccountId")
                         .WithMany("Stocks")
-                        .HasForeignKey("AccountDboAccountId");
+                        .HasForeignKey("AccountId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AccountId");
                 });
 
             modelBuilder.Entity("stockInfoApi.Models.DboModels.TransactionDbo", b =>

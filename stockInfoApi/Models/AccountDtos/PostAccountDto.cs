@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using stockInfoApi.Data;
 using stockInfoApi.Helpers;
 using System.ComponentModel.DataAnnotations;
@@ -10,6 +11,7 @@ namespace stockInfoApi.Models.AccountDtos
     {
         [Required]
         [JsonProperty("accountType")]
+        [JsonConverter(typeof(StringEnumConverter))] // Tell the route this is coming in as a string
         public AccountType AccountType { get; set; }
 
         [Required]
