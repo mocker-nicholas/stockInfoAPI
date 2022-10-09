@@ -8,7 +8,7 @@ using stockInfoApi.Models.ErrorDtos;
 
 namespace stockInfoApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/accounts")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
@@ -23,23 +23,21 @@ namespace stockInfoApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AccountDbo>>> GetAccounts()
         {
-            return await _context.Accounts.ToListAsync();
+            var accounts = await _context.Accounts.ToListAsync();
+            if(accounts == null)
+                return BadRequest(new ErrorMessageDto("No accounts were found"));
+            return Ok(new SuccessMessageDto("success", accounts));
         }
 
         // GET: api/Account/5
         [HttpGet("{id}")]
         public async Task<ActionResult<AccountDbo>> GetAccountDbo(Guid id)
         {
-            var accountDbo = await _context.Accounts.FindAsync(id);
+            var account = await _context.Accounts.FindAsync(id);
 
-            if (accountDbo == null)
-            {
-                return NotFound(
-                    new ErrorMessageDto($"No account was found for accountId: {id}")
-                    );
-            }
-
-            return accountDbo;
+            if (account == null)
+                return NotFound(new ErrorMessageDto($"No account was found for accountId: {id}"));
+            return Ok(new SuccessMessageDto("success", account));
         }
 
         
@@ -64,7 +62,6 @@ namespace stockInfoApi.Controllers
             account.EmailAddress = putAccountDto.EmailAddress;
             account.Nickname = putAccountDto.Nickname;
 
-            
             _context.Entry(account).State = EntityState.Modified;
 
             try
@@ -75,7 +72,7 @@ namespace stockInfoApi.Controllers
             {
                 if (!AccountDboExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new ErrorMessageDto("Account was not found"));
                 }
                 else
                 {
@@ -83,7 +80,7 @@ namespace stockInfoApi.Controllers
                 }
             }
 
-            return Ok(account);
+            return Ok(new SuccessMessageDto("success", account));
         }
 
         // POST: api/AccountDboes
@@ -101,6 +98,7 @@ namespace stockInfoApi.Controllers
             {
                 return BadRequest(new ErrorMessageDto("Account already exists"));
             }
+
             var newAccount = new AccountDbo(
                 postAccountDto.AccountType,
                 postAccountDto.FirstName,
@@ -109,13 +107,16 @@ namespace stockInfoApi.Controllers
                 postAccountDto.Nickname
              );
             _context.Accounts.Add(newAccount);
+            try
+            {
             await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                return BadRequest(new ErrorMessageDto("There was a problem creating your account"));
+            }
 
-            return CreatedAtAction(
-                "GetAccountDbo", 
-                new { id = newAccount.AccountId }, 
-                newAccount
-             );
+            return Ok(new SuccessMessageDto("success", newAccount));
         }
 
         // DELETE: api/AccountDboes/5
@@ -134,6 +135,10 @@ namespace stockInfoApi.Controllers
             return Ok(new SuccessMessageDto($"Account: {id} was successfully deleted"));
         }
 
+
+        // <summary>
+        // Methods used in accounts controller
+        // </summary>
         private bool AccountDboExists(Guid id)
         {
             return _context.Accounts.Any(e => e.AccountId == id);
