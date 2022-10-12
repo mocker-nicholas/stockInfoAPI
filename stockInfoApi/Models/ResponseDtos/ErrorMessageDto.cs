@@ -1,10 +1,11 @@
 ﻿
 
 using Newtonsoft.Json;
+using stockInfoApi.Interfaces;
 
 namespace stockInfoApi.Models.ErrorDtos
 {
-    public class ErrorMessageDto
+    public class ErrorMessageDto : IResponseBody
     {
         const object _data = null;
 
@@ -12,6 +13,7 @@ namespace stockInfoApi.Models.ErrorDtos
         public string Status { get; } = "error";
         [JsonProperty("message")]
         public string Message { get; set; } = "";
+        [JsonProperty("data")]
         public Object Data { get; set; } = new object();
 
         public ErrorMessageDto(string message, object data = _data)

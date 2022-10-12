@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using stockInfoApi.Data;
 using stockInfoApi.Helpers;
 using stockInfoApi.Models.ErrorDtos;
 using stockInfoApi.Models.StockDto;
+using stockInfoApi.Models.StockDtos;
+using stockInfoApi.Models.StockDtos.ResponseDtos;
+using System.Threading.Tasks;
 
 namespace stockInfoApi.Controllers
 {
@@ -20,30 +24,40 @@ namespace stockInfoApi.Controllers
         }
 
         [HttpGet()]
-        public IActionResult GetStock()
+        public async Task<IActionResult> GetStock(string symbol)
         {
-            return Ok(new SuccessMessageDto($"Hey you got me!"));
+            return Ok();
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetStockById(string id)
+        [HttpGet("{symbol}")]
+        public async Task<IActionResult> GetStockById(string symbol)
         {
-            return Ok(new SuccessMessageDto($"Hey you got me {id}!"));
+            var request = new ServicesHelper(_config);
+            var details = await request.NewQuote(symbol);
+            var quote = details.QuoteResponse.Result[0];
+            return Ok(new SuccessMessageDto("success", quote));
         }
 
 
         [HttpPost()]
-        public async Task<IActionResult> BuyStock( PostStockDto postStockDto)
+        public async Task<IActionResult> BuyStock(PostStockDto postStockDto)
         {
             var request = new ServicesHelper(_config);
             var details = await request.NewQuote(postStockDto.Symbol);
-            // reach out for a quote
-            // do the math on number of shares
+            var quote = details.QuoteResponse.Result[0];
+            var ask = quote.Ask;
+
+            var transactionResult = new StockTransaction(
+                postStockDto.AccountId,
+                postStockDto.Symbol,
+                postStockDto.NumShares,
+                postStockDto.TranType,
+                ask
+            );
             // subract the amount from the account total
             // add the current value of all shares
             // update the stock in the db
-            var test = details.QuoteResponse;
-            return Ok(test);
+            return Ok(new SuccessMessageDto("success", transactionResult));
         }
 
         [HttpDelete("{symbol}")]

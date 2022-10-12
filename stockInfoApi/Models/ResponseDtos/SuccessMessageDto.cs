@@ -1,8 +1,9 @@
 ﻿using Newtonsoft.Json;
+using stockInfoApi.Interfaces;
 
 namespace stockInfoApi.Models.ErrorDtos
 {
-    public class SuccessMessageDto
+    public class SuccessMessageDto : IResponseBody
     {
         const object _data = null;
 
@@ -10,7 +11,8 @@ namespace stockInfoApi.Models.ErrorDtos
         public string Status { get; } = "success";
         [JsonProperty("message")]
         public string Message { get; set; } = "";
-        public Object Data { get; set; }
+        [JsonProperty("data")]
+        public Object Data { get; set; } = new object();
 
         public SuccessMessageDto(string message, object data = _data)
         {

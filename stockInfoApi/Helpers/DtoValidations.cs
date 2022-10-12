@@ -1,4 +1,5 @@
-﻿using stockInfoApi.Interfaces;
+﻿using stockInfoApi.Data;
+using stockInfoApi.Interfaces;
 using stockInfoApi.Models.AccountDtos;
 using stockInfoApi.Models.HelperModels;
 using System.Text.RegularExpressions;
@@ -26,10 +27,13 @@ namespace stockInfoApi.Helpers
         {
             var email = ValidEmail(req.EmailAddress);
             var nickname = ValidNickname(req.Nickname);
+            var accountType = Enums.AccountTypeIsValid((int)req.AccountType);
             if (!email)
                 return new ValidationCheck(true, "Invalid email address");
             else if (!nickname)
                 return new ValidationCheck(true, "Nickname can only contain letters and numbers");
+            else if (!accountType)
+                return new ValidationCheck(true, "Invalid account type");
             else
                 return new ValidationCheck(false, "");
         }
