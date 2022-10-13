@@ -2,11 +2,9 @@
 using Microsoft.CodeAnalysis;
 using stockInfoApi.Data;
 using stockInfoApi.Helpers;
+using stockInfoApi.Models.DboModels;
 using stockInfoApi.Models.ErrorDtos;
-using stockInfoApi.Models.StockDto;
 using stockInfoApi.Models.StockDtos;
-using stockInfoApi.Models.StockDtos.ResponseDtos;
-using System.Threading.Tasks;
 
 namespace stockInfoApi.Controllers
 {
@@ -23,12 +21,16 @@ namespace stockInfoApi.Controllers
             _config = config;
         }
 
+        // Get Stocks for account
         [HttpGet()]
-        public async Task<IActionResult> GetStock(string symbol)
+        public IActionResult GetStocks(GetStocksDto getStocksDto)
         {
-            return Ok();
+           var stocks = _context.Stocks.Where(
+                s => s.AccountId!.ToString() == getStocksDto.AccountId.ToString());
+            return Ok(new SuccessMessageDto("success", stocks));
         }
 
+        // Get quote for a stock
         [HttpGet("{symbol}")]
         public async Task<IActionResult> GetStockById(string symbol)
         {
@@ -38,32 +40,45 @@ namespace stockInfoApi.Controllers
             return Ok(new SuccessMessageDto("success", quote));
         }
 
-
+        // Purchase or Sell a stock
         [HttpPost()]
-        public async Task<IActionResult> BuyStock(PostStockDto postStockDto)
+        public async Task<IActionResult> StockTrans(PostStockDto postStockDto)
         {
-            var request = new ServicesHelper(_config);
-            var details = await request.NewQuote(postStockDto.Symbol);
-            var quote = details.QuoteResponse.Result[0];
-            var ask = quote.Ask;
+            if (postStockDto.TranType == Enums.TransactionType.Buy)
+            {
+                // Get data
+                var request = new ServicesHelper(_config);
+                var details = await request.NewQuote(postStockDto.Symbol);
+                var quote = details.QuoteResponse.Result[0];
+                var ask = quote.Ask;
+                // Add stock to account
+                var stock = new StockDbo(
+                    postStockDto.AccountId,
+                    postStockDto.Symbol,
+                    ask,
+                    postStockDto.NumShares,
+                    ask
+                );
 
-            var transactionResult = new StockTransaction(
-                postStockDto.AccountId,
-                postStockDto.Symbol,
-                postStockDto.NumShares,
-                postStockDto.TranType,
-                ask
-            );
-            // subract the amount from the account total
-            // add the current value of all shares
-            // update the stock in the db
-            return Ok(new SuccessMessageDto("success", transactionResult));
-        }
-
-        [HttpDelete("{symbol}")]
-        public IActionResult SellStock(string symbol)
-        {
-            return Ok();
+                _context.Stocks.Add(stock);
+                _context.SaveChanges();
+                // Format and send response
+                var transactionResult = new StockTransactionDbo(
+                    postStockDto.AccountId,
+                    postStockDto.Symbol,
+                    postStockDto.NumShares,
+                    postStockDto.TranType,
+                    ask
+                );
+                // subract the amount from the account total
+                // add the current value of all shares
+                // update the stock in the db
+                return Ok(new SuccessMessageDto("success", transactionResult));
+            }
+            else
+            {
+                return BadRequest("Invalid transaction type, im getting there!");
+            }
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using stockInfoApi.Models.DboModels;
-using stockInfoApi.Models.StockDtos;
-using stockInfoApi.Models.StockDtos.ResponseDtos;
 
 namespace stockInfoApi.Data
 {
@@ -18,13 +16,13 @@ namespace stockInfoApi.Data
             builder.Entity<AccountDbo>()
                 .Property(accountDbo => accountDbo.AccountType)
                 .HasConversion<string>();
-            builder.Entity<StockTransaction>()
+            builder.Entity<StockTransactionDbo>()
                .Property(stockTransaction => stockTransaction.TranType)
                .HasConversion<string>();
         }
 
         public DbSet<AccountDbo> Accounts { get; set; }
         public DbSet<StockDbo> Stocks { get; set; }
-        public DbSet <StockTransaction> Transactions { get; set; }
+        public DbSet <StockTransactionDbo> Transactions { get; set; }
 }
 }

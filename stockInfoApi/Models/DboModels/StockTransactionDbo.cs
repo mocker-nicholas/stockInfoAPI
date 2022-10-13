@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using stockInfoApi.Models.DboModels;
 using System.ComponentModel.DataAnnotations;
 using static stockInfoApi.Helpers.Enums;
 
-namespace stockInfoApi.Models.StockDtos.ResponseDtos
+namespace stockInfoApi.Models.DboModels
 {
-    public class StockTransaction
+    public class StockTransactionDbo
     {
         [Key]
         [JsonProperty("transactionId")]
@@ -32,14 +31,14 @@ namespace stockInfoApi.Models.StockDtos.ResponseDtos
         [JsonProperty("transactionAmount")]
         public double TransactionAmount { get; }
 
-        public StockTransaction( Guid accountId, string symbol, int numShares, TransactionType tranType, double sharePrice)
+        public StockTransactionDbo(Guid accountId, string symbol, int numShares, TransactionType tranType, double sharePrice)
         {
             AccountId = accountId;
             Symbol = symbol;
             NumShares = numShares;
             TranType = tranType;
             SharePrice = sharePrice;
-            TransactionAmount = Math.Round((numShares * sharePrice), 2, MidpointRounding.AwayFromZero);
+            TransactionAmount = Math.Round(numShares * sharePrice, 2, MidpointRounding.AwayFromZero);
         }
     }
 }

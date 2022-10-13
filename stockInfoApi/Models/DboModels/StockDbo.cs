@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace stockInfoApi.Models.DboModels
 {
@@ -9,9 +10,12 @@ namespace stockInfoApi.Models.DboModels
         [JsonProperty("stockId")]
         public Guid StockId { get; set; } = Guid.NewGuid();
 
+        public AccountDbo AccountDbo { get; set; }
+
         [Required]
         [JsonProperty("accountId")]
-        public AccountDbo? AccountId { get; set; }
+        [ForeignKey("AccountDbo")]
+        public Guid AccountId { get; set; }
 
         [Required]
         [JsonProperty("symbol")]
@@ -28,5 +32,14 @@ namespace stockInfoApi.Models.DboModels
         [Required]
         [JsonProperty("sharePrice")]
         public double SharePrice { get; set; } = 0;
+
+        public StockDbo(Guid accountId, string symbol, double purchasePrice, int numShares, double sharePrice)
+        {
+            AccountId = accountId;
+            Symbol = symbol;
+            PurchasePrice = purchasePrice;
+            NumShares = numShares;
+            SharePrice = sharePrice;
+        }
     }
 }

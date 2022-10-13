@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using stockInfoApi.Models.StockDtos.ResponseDtos;
 using System.ComponentModel.DataAnnotations;
 using static stockInfoApi.Helpers.Enums;
 
@@ -37,7 +36,7 @@ namespace stockInfoApi.Models.DboModels
         public List<StockDbo>? Stocks { get; set; }
 
         [JsonProperty("transactions")]
-        public List<StockTransaction>? Transactions { get; set; }
+        public List<StockTransactionDbo>? Transactions { get; set; }
 
         public AccountDbo(
             AccountType accountType, 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using stockInfoApi.Data;
 
@@ -11,9 +12,10 @@ using stockInfoApi.Data;
 namespace stockInfoApi.Migrations
 {
     [DbContext(typeof(DevDbContext))]
-    partial class DevDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221013002340_addfktostockdbo")]
+    partial class addfktostockdbo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,7 +52,7 @@ namespace stockInfoApi.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("stockInfoApi.Models.DboModels.StockDbo", b =>
@@ -79,7 +81,7 @@ namespace stockInfoApi.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("Stocks", (string)null);
+                    b.ToTable("Stocks");
                 });
 
             modelBuilder.Entity("stockInfoApi.Models.StockDtos.ResponseDtos.StockTransaction", b =>
@@ -112,7 +114,7 @@ namespace stockInfoApi.Migrations
 
                     b.HasIndex("AccountDboAccountId");
 
-                    b.ToTable("Transactions", (string)null);
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("stockInfoApi.Models.DboModels.StockDbo", b =>

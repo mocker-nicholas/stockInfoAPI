@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using stockInfoApi.Data;
 
@@ -11,9 +12,10 @@ using stockInfoApi.Data;
 namespace stockInfoApi.Migrations
 {
     [DbContext(typeof(DevDbContext))]
-    partial class DevDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221013002043_changestockfktoguid")]
+    partial class changestockfktoguid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,13 +52,16 @@ namespace stockInfoApi.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("stockInfoApi.Models.DboModels.StockDbo", b =>
                 {
                     b.Property<Guid>("StockId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AccountDboAccountId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AccountId")
@@ -77,9 +82,9 @@ namespace stockInfoApi.Migrations
 
                     b.HasKey("StockId");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("AccountDboAccountId");
 
-                    b.ToTable("Stocks", (string)null);
+                    b.ToTable("Stocks");
                 });
 
             modelBuilder.Entity("stockInfoApi.Models.StockDtos.ResponseDtos.StockTransaction", b =>
@@ -112,18 +117,14 @@ namespace stockInfoApi.Migrations
 
                     b.HasIndex("AccountDboAccountId");
 
-                    b.ToTable("Transactions", (string)null);
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("stockInfoApi.Models.DboModels.StockDbo", b =>
                 {
-                    b.HasOne("stockInfoApi.Models.DboModels.AccountDbo", "AccountDbo")
+                    b.HasOne("stockInfoApi.Models.DboModels.AccountDbo", null)
                         .WithMany("Stocks")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AccountDbo");
+                        .HasForeignKey("AccountDboAccountId");
                 });
 
             modelBuilder.Entity("stockInfoApi.Models.StockDtos.ResponseDtos.StockTransaction", b =>
