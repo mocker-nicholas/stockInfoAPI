@@ -1,4 +1,0 @@
-﻿namespace stockInfoApi.Interfaces
-{
-
-}

@@ -1,6 +1,4 @@
-﻿using stockInfoApi.Data;
-using stockInfoApi.Interfaces;
-using stockInfoApi.Models.AccountDtos;
+﻿using stockInfoApi.Models.AccountDtos;
 using stockInfoApi.Models.HelperModels;
 using System.Text.RegularExpressions;
 

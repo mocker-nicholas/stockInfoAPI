@@ -4,7 +4,7 @@ using stockInfoApi.Data;
 using stockInfoApi.Helpers;
 using stockInfoApi.Models.AccountDtos;
 using stockInfoApi.Models.DboModels;
-using stockInfoApi.Models.ErrorDtos;
+using stockInfoApi.Models.ResponseDtos;
 
 namespace stockInfoApi.Controllers
 {
@@ -25,8 +25,8 @@ namespace stockInfoApi.Controllers
         {
             var accounts = await _context.Accounts.ToListAsync();
             if(accounts == null)
-                return BadRequest(new ErrorMessageDto("No accounts were found"));
-            return Ok(new SuccessMessageDto("success", accounts));
+                return BadRequest(new ResponseMessageDto<AccountDbo>("Error", "No accounts were found"));
+            return Ok(new ResponseMessageDto<IEnumerable<AccountDbo>>("success", "success", accounts));
         }
 
         // GET: api/Account/5
@@ -36,8 +36,8 @@ namespace stockInfoApi.Controllers
             var account = await _context.Accounts.FindAsync(id);
 
             if (account == null)
-                return NotFound(new ErrorMessageDto($"No account was found for accountId: {id}"));
-            return Ok(new SuccessMessageDto("success", account));
+                return NotFound(new ResponseMessageDto<AccountDbo>("Error", $"No account was found for accountId: {id}"));
+            return Ok(new ResponseMessageDto<AccountDbo>("success", "success", account));
         }
 
         
@@ -47,13 +47,13 @@ namespace stockInfoApi.Controllers
             var validDto = DtoValidations.ValidPutAccountDto(putAccountDto);
             if(validDto.Error)
             {
-                return BadRequest(new ErrorMessageDto($"{validDto.Message}"));
+                return BadRequest(new ResponseMessageDto<AccountDbo>("error", $"{validDto.Message}"));
             }
 
             var account = await _context.Accounts.FindAsync(id);
             if(account == null)
             {
-                return NotFound(new ErrorMessageDto("Account was not found"));
+                return NotFound(new ResponseMessageDto<AccountDbo>("Error", "Account was not found"));
             }
 
             account.AccountType = putAccountDto.AccountType;
@@ -72,7 +72,7 @@ namespace stockInfoApi.Controllers
             {
                 if (!AccountDboExists(id))
                 {
-                    return NotFound(new ErrorMessageDto("Account was not found"));
+                    return NotFound(new ResponseMessageDto<AccountDbo>("Error", "Account was not found"));
                 }
                 else
                 {
@@ -80,7 +80,7 @@ namespace stockInfoApi.Controllers
                 }
             }
 
-            return Ok(new SuccessMessageDto("success", account));
+            return Ok(new ResponseMessageDto<AccountDbo>("success", "success", account));
         }
 
         // POST: api/AccountDboes
@@ -90,13 +90,13 @@ namespace stockInfoApi.Controllers
             var validDto = DtoValidations.ValidPostAccountDto(postAccountDto);
             if (validDto.Error)
             {
-                return BadRequest(new ErrorMessageDto($"{validDto.Message}"));
+                return BadRequest(new ResponseMessageDto<AccountDbo>("error", $"{validDto.Message}"));
             }
 
             var existingAccount = AccountAlreadyExists(postAccountDto.EmailAddress);
             if (existingAccount)
             {
-                return BadRequest(new ErrorMessageDto("Account already exists"));
+                return BadRequest(new ResponseMessageDto<AccountDbo>("error", "Account already exists"));
             }
 
             var newAccount = new AccountDbo(
@@ -113,10 +113,10 @@ namespace stockInfoApi.Controllers
             }
             catch
             {
-                return BadRequest(new ErrorMessageDto("There was a problem creating your account"));
+                return BadRequest(new ResponseMessageDto<AccountDbo>("error", "There was a problem creating your account"));
             }
 
-            return Ok(new SuccessMessageDto("success", newAccount));
+            return Ok(new ResponseMessageDto<AccountDbo>("success", "success", newAccount));
         }
 
         // DELETE: api/AccountDboes/5
@@ -126,13 +126,13 @@ namespace stockInfoApi.Controllers
             var accountDbo = await _context.Accounts.FindAsync(id);
             if (accountDbo == null)
             {
-                return NotFound(new ErrorMessageDto($"No account was found for id: {id}"));
+                return NotFound(new ResponseMessageDto<AccountDbo>("error", $"No account was found for id: {id}"));
             }
 
             _context.Accounts.Remove(accountDbo);
             await _context.SaveChangesAsync();
 
-            return Ok(new SuccessMessageDto($"Account: {id} was successfully deleted"));
+            return Ok(new ResponseMessageDto<AccountDbo>("success", $"Account: {id} was successfully deleted"));
         }
 
 
