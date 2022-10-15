@@ -61,6 +61,7 @@ namespace stockInfoApi.Controllers
             account.LastName = putAccountDto.LastName;
             account.EmailAddress = putAccountDto.EmailAddress;
             account.Nickname = putAccountDto.Nickname;
+            account.ModifiedAt = DateTime.UtcNow;
 
             _context.Entry(account).State = EntityState.Modified;
 
@@ -98,7 +99,6 @@ namespace stockInfoApi.Controllers
             {
                 return BadRequest(new ResponseMessageDto<AccountDbo>("error", "Account already exists"));
             }
-
             var newAccount = new AccountDbo(
                 postAccountDto.AccountType,
                 postAccountDto.FirstName,

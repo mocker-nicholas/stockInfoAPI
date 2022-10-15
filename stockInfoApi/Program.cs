@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using stockInfoApi.Data;
-using stockInfoApi.Models.DboModels;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);

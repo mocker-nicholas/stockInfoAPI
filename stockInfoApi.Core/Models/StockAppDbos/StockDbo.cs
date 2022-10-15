@@ -35,10 +35,10 @@ namespace stockInfoApi.Models.DboModels
         public double SharePrice { get; set; } = 0;
 
         [JsonProperty("created_at")]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [JsonProperty("modified_at")]
-        public DateTime ModifiedAt { get; set; } = DateTime.Now;
+        public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
 
         public StockDbo(Guid accountId, string symbol, double purchasePrice, int numShares, double sharePrice)
         {

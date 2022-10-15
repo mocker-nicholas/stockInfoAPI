@@ -33,17 +33,11 @@ namespace stockInfoApi.Models.DboModels
         [JsonProperty("balance")]
         public double Balance { get; } = 10000;
 
-        [JsonProperty("stocks")]
-        public List<StockDbo>? Stocks { get; set; }
-
-        [JsonProperty("transactions")]
-        public List<StockTransactionDbo>? Transactions { get; set; }
-
         [JsonProperty("created_at")]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [JsonProperty("modified_at")]
-        public DateTime ModifiedAt { get; set; } = DateTime.Now;
+        public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
 
         public AccountDbo(
             AccountType accountType, 
