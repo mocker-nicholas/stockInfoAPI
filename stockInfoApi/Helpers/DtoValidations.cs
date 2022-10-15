@@ -1,5 +1,5 @@
-﻿using stockInfoApi.Models.AccountDtos;
-using stockInfoApi.Models.HelperModels;
+﻿using stockInfoApi.Core.Models.ResponseDtos;
+using stockInfoApi.Models.AccountDtos;
 using System.Text.RegularExpressions;
 
 namespace stockInfoApi.Helpers

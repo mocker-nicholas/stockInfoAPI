@@ -39,8 +39,8 @@ namespace stockInfoApi.Controllers
         public async Task<IActionResult> GetStockById(string symbol)
         {
             // Inject this as a depency and register it in the IOC
-            var request = new ServicesHelper(_config);
-            var details = await request.NewQuote(symbol);
+            var request = new StockQuotes();
+            var details = await request.NewQuote(_config["YF_BASE_URL"], _config["YF_API_KEY"], symbol);
             var quote = details.QuoteResponse.Result[0];
             return Ok(new ResponseMessageDto<Result>("success", "success", quote));
         }
@@ -52,8 +52,8 @@ namespace stockInfoApi.Controllers
             if (postStockDto.TranType == Enums.TransactionType.Buy)
             {
                 // Get data
-                var request = new ServicesHelper(_config);
-                var details = await request.NewQuote(postStockDto.Symbol);
+                var request = new StockQuotes();
+                var details = await request.NewQuote(_config["YF_BASE_URL"], _config["YF_API_KEY"], postStockDto.Symbol);
                 var quote = details.QuoteResponse.Result[0];
                 var ask = quote.Ask;
                 // Add stock to account

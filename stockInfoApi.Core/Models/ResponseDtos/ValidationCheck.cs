@@ -1,4 +1,4 @@
-﻿namespace stockInfoApi.Models.HelperModels
+﻿namespace stockInfoApi.Core.Models.ResponseDtos
 {
     public class ValidationCheck
     {

@@ -3,18 +3,13 @@ using stockInfoApi.Models.YFDto;
 
 namespace stockInfoApi.Helpers
 {
-    public class ServicesHelper
+    public class StockQuotes
     {
-        private readonly IConfiguration _config;
-        public ServicesHelper(IConfiguration config)
-        {
-            _config = config;
-        }
-        public async Task<QuoteDto> NewQuote(string ticker)
+        public async Task<QuoteDto> NewQuote(string baseUrl, string apiKey, string ticker)
         {
             using var req = new HttpClient();
-            req.DefaultRequestHeaders.Add("x-api-key", _config["YF_API_KEY"]);
-            HttpResponseMessage response = await req.GetAsync($"{_config["YF_BASE_URL"]}/quote?region=US&lang=en&symbols={ticker.ToUpper()}");
+            req.DefaultRequestHeaders.Add("x-api-key", apiKey);
+            HttpResponseMessage response = await req.GetAsync($"{baseUrl}/quote?region=US&lang=en&symbols={ticker.ToUpper()}");
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadAsStringAsync();
