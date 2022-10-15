@@ -1,6 +1,6 @@
 ﻿using stockInfoApi.Core.Models.ResponseDtos;
+using stockInfoApi.Core.Validations;
 using stockInfoApi.Models.AccountDtos;
-using System.Text.RegularExpressions;
 
 namespace stockInfoApi.Helpers
 {
@@ -8,8 +8,8 @@ namespace stockInfoApi.Helpers
     {
         public static ValidationCheck ValidPutAccountDto (PutAccountDto req)
         {
-            var email = ValidEmail(req.EmailAddress);
-            var nickname = ValidNickname(req.Nickname);
+            var email = PropertyValidations.ValidEmail(req.EmailAddress);
+            var nickname = PropertyValidations.ValidNickname(req.Nickname);
             var accountType = Enums.AccountTypeIsValid((int)req.AccountType);
             if (!email)
                 return new ValidationCheck(true, "Invalid email address");
@@ -23,8 +23,8 @@ namespace stockInfoApi.Helpers
 
         public static ValidationCheck ValidPostAccountDto (PostAccountDto req)
         {
-            var email = ValidEmail(req.EmailAddress);
-            var nickname = ValidNickname(req.Nickname);
+            var email = PropertyValidations.ValidEmail(req.EmailAddress);
+            var nickname = PropertyValidations.ValidNickname(req.Nickname);
             var accountType = Enums.AccountTypeIsValid((int)req.AccountType);
             if (!email)
                 return new ValidationCheck(true, "Invalid email address");
@@ -34,34 +34,6 @@ namespace stockInfoApi.Helpers
                 return new ValidationCheck(true, "Invalid account type");
             else
                 return new ValidationCheck(false, "");
-        }
-
-        public static bool ValidEmail(string email)
-        {
-            var trimmedEmail = email.Trim();
-
-            if (trimmedEmail.EndsWith("."))
-            {
-                return false;
-            }
-            try
-            {
-                var addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == trimmedEmail;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public static bool ValidNickname(string nickname)
-        {
-            string pattern = "^[a-zA-Z][a-zA-Z0-9]*$";
-            var result = Regex.IsMatch(nickname, pattern);
-            if(result)
-                return true;
-            return false;
         }
     }
 }
