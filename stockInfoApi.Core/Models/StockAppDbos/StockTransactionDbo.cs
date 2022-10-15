@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using stockInfoApi.Core.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using static stockInfoApi.Helpers.Enums;
 
 namespace stockInfoApi.Models.DboModels
 {
-    public class StockTransactionDbo
+    public class StockTransactionDbo : IDateCreateable
     {
         [Key]
         [JsonProperty("transactionId")]
@@ -30,6 +31,9 @@ namespace stockInfoApi.Models.DboModels
 
         [JsonProperty("transactionAmount")]
         public double TransactionAmount { get; }
+
+        [JsonProperty("created_at")]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public StockTransactionDbo(Guid accountId, string symbol, int numShares, TransactionType tranType, double sharePrice)
         {
