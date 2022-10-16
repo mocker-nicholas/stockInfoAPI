@@ -56,7 +56,7 @@ namespace stockInfoApi.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
                 });
 
             modelBuilder.Entity("stockInfoApi.Models.DboModels.StockDbo", b =>
@@ -91,7 +91,7 @@ namespace stockInfoApi.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("Stocks");
+                    b.ToTable("Stocks", (string)null);
                 });
 
             modelBuilder.Entity("stockInfoApi.Models.DboModels.StockTransactionDbo", b =>
@@ -122,7 +122,7 @@ namespace stockInfoApi.Migrations
 
                     b.HasKey("TransactionId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("stockInfoApi.Models.DboModels.StockDbo", b =>

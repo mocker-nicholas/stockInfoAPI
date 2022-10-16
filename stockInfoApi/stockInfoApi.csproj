@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\stockInfoApi.Core\stockInfoApi.Core.csproj" />
+    <ProjectReference Include="..\stockInfoApi.Core\stockInfoApi.DAL.csproj" />
   </ItemGroup>
 
 </Project>

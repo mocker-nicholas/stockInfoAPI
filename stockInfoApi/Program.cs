@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using stockInfoApi.DAL.ControllerFeatures;
 using stockInfoApi.Data;
 using System.Text.Json.Serialization;
 
@@ -7,14 +8,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<DevDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        b => b.MigrationsAssembly("stockInfoApi")
+    );
 });
 
 // Add something to IOC singlton = 1, scoped = per req, transient = every reference
-// builder.Services.AddScoped()
+builder.Services.AddScoped<AccountFeatures, AccountFeatures>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
-{options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
+{options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
