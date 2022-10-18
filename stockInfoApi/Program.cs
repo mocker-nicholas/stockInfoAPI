@@ -18,7 +18,7 @@ builder.Services.AddDbContext<DevDbContext>(options =>
 builder.Services.AddScoped<AccountFeatures, AccountFeatures>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
-{options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());});
+{ options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

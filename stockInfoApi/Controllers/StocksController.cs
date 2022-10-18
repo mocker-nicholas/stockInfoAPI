@@ -7,6 +7,7 @@ using stockInfoApi.Models.DboModels;
 using stockInfoApi.Models.ResponseDtos;
 using stockInfoApi.Models.StockDtos;
 using stockInfoApi.Models.YFDto;
+using static stockInfoApi.Helpers.Enums;
 
 namespace stockInfoApi.Controllers
 {
@@ -51,16 +52,26 @@ namespace stockInfoApi.Controllers
         {
             if (postStockDto.TranType == Enums.TransactionType.Buy)
             {
+                // Check for existing stock for user
+                var existingStock = StockExists(postStockDto.TranType, postStockDto.AccountId, postStockDto.Symbol);
                 // Get data
                 var request = new StockQuotes();
                 var details = await request.NewQuote(_config["YF_BASE_URL"], _config["YF_API_KEY"], postStockDto.Symbol);
                 var quote = details.QuoteResponse.Result[0];
                 var ask = quote.Ask;
+                var totalHoldings = ask * postStockDto.NumShares;
+
+                if (existingStock.Result)
+                {
+                    /////// YOU ARE HERE
+                    var stockUpdate = _context.Stocks.Where(x => x.Symbol == postStockDto.Symbol && x.AccountId == postStockDto.AccountId);
+                    /////// YOU ARE HERE
+                }
                 // Add stock to account
                 var stock = new StockDbo(
                     postStockDto.AccountId,
                     postStockDto.Symbol,
-                    ask,
+                    totalHoldings,
                     postStockDto.NumShares,
                     ask
                 );
@@ -84,6 +95,14 @@ namespace stockInfoApi.Controllers
             {
                 return BadRequest("Invalid transaction type, im getting there!");
             }
+        }
+
+        private async Task<bool> StockExists(TransactionType TransactionType, Guid accountId, string symbol)
+        {
+            var ownedStock = await _context.Stocks.FirstOrDefaultAsync(x => x.Symbol == symbol && x.AccountId == accountId);
+            if (ownedStock != null)
+                return true;
+            return false;
         }
     }
 }

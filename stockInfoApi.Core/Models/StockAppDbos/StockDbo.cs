@@ -23,8 +23,8 @@ namespace stockInfoApi.Models.DboModels
         public string Symbol { get; set; } = string.Empty;
 
         [Required]
-        [JsonProperty("purchasePrice")]
-        public double PurchasePrice { get; set; } = 0;
+        [JsonProperty("totalHoldings")]
+        public double TotalHoldings { get; set; } = 0;
 
         [Required]
         [JsonProperty("numShares")]
@@ -40,11 +40,11 @@ namespace stockInfoApi.Models.DboModels
         [JsonProperty("modified_at")]
         public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
 
-        public StockDbo(Guid accountId, string symbol, double purchasePrice, int numShares, double sharePrice)
+        public StockDbo(Guid accountId, string symbol, double totalHoldings, int numShares, double sharePrice)
         {
             AccountId = accountId;
             Symbol = symbol;
-            PurchasePrice = purchasePrice;
+            TotalHoldings = totalHoldings;
             NumShares = numShares;
             SharePrice = sharePrice;
         }
