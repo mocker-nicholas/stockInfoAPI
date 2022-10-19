@@ -35,7 +35,13 @@ namespace stockInfoApi.Models.DboModels
         [JsonProperty("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public StockTransactionDbo(Guid accountId, string symbol, int numShares, TransactionType tranType, double sharePrice)
+        public StockTransactionDbo(
+            Guid accountId, 
+            string symbol, 
+            int numShares, 
+            TransactionType tranType, 
+            double sharePrice
+         )
         {
             AccountId = accountId;
             Symbol = symbol;

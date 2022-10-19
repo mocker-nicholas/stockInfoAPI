@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace stockInfoApi.Models.DboModels
 {
-    public class StockDbo : IDateCreateable, IModifiable
+    public class StockDbo
     {
         [Key]
         [JsonProperty("stockId")]
@@ -30,23 +30,12 @@ namespace stockInfoApi.Models.DboModels
         [JsonProperty("numShares")]
         public int NumShares { get; set; } = 0;
 
-        [Required]
-        [JsonProperty("sharePrice")]
-        public double SharePrice { get; set; } = 0;
-
-        [JsonProperty("created_at")]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        [JsonProperty("modified_at")]
-        public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
-
-        public StockDbo(Guid accountId, string symbol, double totalHoldings, int numShares, double sharePrice)
+        public StockDbo(Guid accountId, string symbol, double totalHoldings, int numShares)
         {
             AccountId = accountId;
             Symbol = symbol;
-            TotalHoldings = totalHoldings;
+            TotalHoldings = Math.Round(totalHoldings, 2, MidpointRounding.AwayFromZero);
             NumShares = numShares;
-            SharePrice = sharePrice;
         }
     }
 }

@@ -30,8 +30,8 @@ namespace stockInfoApi.Controllers
         [HttpGet()]
         public async Task<IActionResult> GetStocks(GetStocksDto getStocksDto)
         {
-           var stocks = await _context.Stocks.Where(
-                s => s.AccountId!.ToString() == getStocksDto.AccountId.ToString()).ToListAsync();
+            var stocks = await _context.Stocks.Where(
+                 s => s.AccountId!.ToString() == getStocksDto.AccountId.ToString()).ToListAsync();
             return Ok(new ResponseMessageDto<IEnumerable<StockDbo>>("success", "success", stocks));
         }
 
@@ -63,17 +63,30 @@ namespace stockInfoApi.Controllers
 
                 if (existingStock.Result)
                 {
-                    /////// YOU ARE HERE
-                    var stockUpdate = _context.Stocks.Where(x => x.Symbol == postStockDto.Symbol && x.AccountId == postStockDto.AccountId);
-                    /////// YOU ARE HERE
+                    // subract the amount from the account total
+
+                    // update the stock in the db
+                    var stockToUpdate = await _context.Stocks.FirstOrDefaultAsync(x => x.Symbol == postStockDto.Symbol && x.AccountId == postStockDto.AccountId);
+                    stockToUpdate.TotalHoldings = stockToUpdate.TotalHoldings + totalHoldings;
+                    stockToUpdate.NumShares = stockToUpdate.NumShares + postStockDto.NumShares;
+                    await _context.SaveChangesAsync();
+
+                    var addStockResult = new StockTransactionDbo(
+                        postStockDto.AccountId,
+                        postStockDto.Symbol,
+                        postStockDto.NumShares,
+                        postStockDto.TranType,
+                        ask
+                    );
+                    return Ok(new ResponseMessageDto<StockTransactionDbo>("success", "success", addStockResult));
                 }
-                // Add stock to account
+
+                // Add stock to account if it doesnt already exist
                 var stock = new StockDbo(
                     postStockDto.AccountId,
                     postStockDto.Symbol,
                     totalHoldings,
-                    postStockDto.NumShares,
-                    ask
+                    postStockDto.NumShares
                 );
 
                 _context.Stocks.Add(stock);
@@ -86,14 +99,61 @@ namespace stockInfoApi.Controllers
                     postStockDto.TranType,
                     ask
                 );
-                // subract the amount from the account total
-                // add the current value of all shares
-                // update the stock in the db
                 return Ok(new ResponseMessageDto<StockTransactionDbo>("success", "success", transactionResult));
+            }
+            else if (postStockDto.TranType == Enums.TransactionType.Sell)
+            {
+                // Check for existing stock for user
+                var existingStock = StockExists(postStockDto.TranType, postStockDto.AccountId, postStockDto.Symbol);
+                // Get data
+                var request = new StockQuotes();
+                var details = await request.NewQuote(_config["YF_BASE_URL"], _config["YF_API_KEY"], postStockDto.Symbol);
+                var quote = details.QuoteResponse.Result[0];
+                var ask = quote.Ask;
+                var totalHoldings = ask * postStockDto.NumShares;
+
+                if (existingStock.Result)
+                {
+                    // subract the amount from the account total
+
+                    // update the stock in the db
+                    var stockToUpdate = await _context.Stocks.FirstOrDefaultAsync(x => x.Symbol == postStockDto.Symbol && x.AccountId == postStockDto.AccountId);
+
+                    if (stockToUpdate.NumShares < postStockDto.NumShares)
+                    {
+                        return BadRequest($"Not enough {postStockDto.Symbol} available to sell");
+                    }
+                    if (stockToUpdate.NumShares == postStockDto.NumShares)
+                    {
+                        var sellResult = new StockTransactionDbo(
+                            postStockDto.AccountId,
+                            postStockDto.Symbol,
+                            postStockDto.NumShares,
+                            postStockDto.TranType,
+                            ask
+                        );
+                        _context.Stocks.Remove(stockToUpdate);
+                        _context.SaveChanges();
+                        return Ok(new ResponseMessageDto<StockTransactionDbo>("success", "success", sellResult));
+                    };
+                    stockToUpdate.TotalHoldings = stockToUpdate.TotalHoldings - totalHoldings;
+                    stockToUpdate.NumShares = stockToUpdate.NumShares - postStockDto.NumShares;
+                    await _context.SaveChangesAsync();
+
+                    var addStockResult = new StockTransactionDbo(
+                        postStockDto.AccountId,
+                        postStockDto.Symbol,
+                        postStockDto.NumShares,
+                        postStockDto.TranType,
+                        ask
+                    );
+                    return Ok(new ResponseMessageDto<StockTransactionDbo>("success", "success", addStockResult));
+                }
+                return NotFound(new ResponseMessageDto<StockTransactionDbo>("error", "No stock available to sell", null));
             }
             else
             {
-                return BadRequest("Invalid transaction type, im getting there!");
+                return BadRequest("Invalid transaction type: expected buy or sell");
             }
         }
 
