@@ -53,15 +53,15 @@ namespace stockInfoApi.Controllers
             if (postStockDto.TranType == Enums.TransactionType.Buy)
             {
                 // Check for existing stock for user
-                var existingStock = StockExists(postStockDto.TranType, postStockDto.AccountId, postStockDto.Symbol);
+                bool existingStock = await StockExists(postStockDto.TranType, postStockDto.AccountId, postStockDto.Symbol);
                 // Get data
                 var request = new StockQuotes();
-                var details = await request.NewQuote(_config["YF_BASE_URL"], _config["YF_API_KEY"], postStockDto.Symbol);
-                var quote = details.QuoteResponse.Result[0];
+                QuoteDto details = await request.NewQuote(_config["YF_BASE_URL"], _config["YF_API_KEY"], postStockDto.Symbol);
+                Result quote = details.QuoteResponse.Result[0];
                 var ask = quote.Ask;
                 var totalHoldings = ask * postStockDto.NumShares;
 
-                if (existingStock.Result)
+                if (existingStock)
                 {
                     // subract the amount from the account total
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.Data;
 using stockInfoApi.Helpers;
 using stockInfoApi.Models.AccountDtos;
@@ -7,7 +8,7 @@ using stockInfoApi.Models.ResponseDtos;
 
 namespace stockInfoApi.DAL.ControllerFeatures
 {
-    public class AccountFeatures
+    public class AccountFeatures : IAccountFeatures
     {
         private readonly DevDbContext _context;
 
@@ -19,39 +20,39 @@ namespace stockInfoApi.DAL.ControllerFeatures
         // <summary>
         // Get all currently existing accounts
         // </summary>
-        public async Task<ResponseMessageDto<IEnumerable<AccountDbo>>> GetAllAccounts()
+        public async Task<IEnumerable<AccountDbo>> GetAllAccounts()
         {
             var accounts = await _context.Accounts.ToListAsync();
-            return new ResponseMessageDto<IEnumerable<AccountDbo>>("success", "success", accounts);
+            return accounts;
         }
 
         // <summary>
         // Get an account by it's account Id
         // </summary>
-        public async Task<ResponseMessageDto<AccountDbo>> GetAccountById(Guid id)
+        public async Task<AccountDbo> GetAccountById(Guid id)
         {
             var account = await _context.Accounts.FindAsync(id);
 
             if (account == null)
-                return new ResponseMessageDto<AccountDbo>("Error", $"No account was found for accountId: {id}");
-            return new ResponseMessageDto<AccountDbo>("success", "success", account);
+                return null;
+            return null;
         }
 
         // <summary>
         // Update an existing account
         // </summary>
-        public async Task<ResponseMessageDto<AccountDbo>> UpdateAccount(Guid id, PutAccountDto body)
+        public async Task<AccountDbo> UpdateAccount(Guid id, PutAccountDto body)
         {
             var validDto = DtoValidations.ValidPutAccountDto(body);
             if (validDto.Error)
             {
-                return new ResponseMessageDto<AccountDbo>("error", $"{validDto.Message}");
+                return null;
             }
 
             var account = await _context.Accounts.FindAsync(id);
             if (account == null)
             {
-                return new ResponseMessageDto<AccountDbo>("Error", "Account was not found");
+            return account;
             }
 
             account.AccountType = body.AccountType;
@@ -71,7 +72,7 @@ namespace stockInfoApi.DAL.ControllerFeatures
             {
                 if (!AccountDboExists(id))
                 {
-                    return new ResponseMessageDto<AccountDbo>("Error", "Account was not found");
+                    return null;
                 }
                 else
                 {
@@ -79,24 +80,24 @@ namespace stockInfoApi.DAL.ControllerFeatures
                 }
             }
 
-            return new ResponseMessageDto<AccountDbo>("success", "success", account);
+            return account;
         }
 
         // <summary>
         // Create a new account
         // </summary>
-        public async Task<ResponseMessageDto<AccountDbo>> CreateAccount(PostAccountDto account)
+        public async Task<AccountDbo> CreateAccount(PostAccountDto account)
         {
             var validDto = DtoValidations.ValidPostAccountDto(account);
             if (validDto.Error)
             {
-                return new ResponseMessageDto<AccountDbo>("error", $"{validDto.Message}");
+                return null;
             }
 
             var existingAccount = AccountAlreadyExists(account.EmailAddress);
             if (existingAccount)
             {
-                return (new ResponseMessageDto<AccountDbo>("error", "Account already exists"));
+                return null;
             }
             var newAccount = new AccountDbo(
                 account.AccountType,
@@ -112,27 +113,27 @@ namespace stockInfoApi.DAL.ControllerFeatures
             }
             catch
             {
-                return new ResponseMessageDto<AccountDbo>("error", "There was a problem creating your account");
+                return null;
             }
 
-            return new ResponseMessageDto<AccountDbo>("success", "success", newAccount);
+            return newAccount;
         }
 
         // <summary>
         // Delete an account from the Accounts Table
         // </summary>
-        public async Task<ResponseMessageDto<AccountDbo>> DeleteAccount(Guid id)
+        public async Task<AccountDbo> DeleteAccount(Guid id)
         {
             var accountDbo = await _context.Accounts.FindAsync(id);
             if (accountDbo == null)
             {
-                return new ResponseMessageDto<AccountDbo>("error", $"No account was found for id: {id}");
+                return null;
             }
 
             _context.Accounts.Remove(accountDbo);
             await _context.SaveChangesAsync();
 
-            return new ResponseMessageDto<AccountDbo>("success", $"Account: {id} was successfully deleted");
+            return null;
         }
 
         // <summary>

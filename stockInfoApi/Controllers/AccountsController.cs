@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using stockInfoApi.DAL.ControllerFeatures;
-using stockInfoApi.Helpers;
+using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.Models.AccountDtos;
 using stockInfoApi.Models.DboModels;
-using stockInfoApi.Models.ResponseDtos;
 
 namespace stockInfoApi.Controllers
 {
@@ -12,9 +10,9 @@ namespace stockInfoApi.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly AccountFeatures _features;
+        private readonly IAccountFeatures _features;
 
-        public AccountsController(AccountFeatures features)
+        public AccountsController(IAccountFeatures features)
         {
             _features = features;
         }
