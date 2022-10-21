@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace stockInfoApi.Models.ResponseDtos
+namespace stockInfoApi.DAL.ResponseDtos
 {
     public class ResponseMessageDto<T>
     {

@@ -4,7 +4,6 @@ using stockInfoApi.Data;
 using stockInfoApi.Helpers;
 using stockInfoApi.Models.AccountDtos;
 using stockInfoApi.Models.DboModels;
-using stockInfoApi.Models.ResponseDtos;
 
 namespace stockInfoApi.DAL.ControllerFeatures
 {
@@ -22,7 +21,7 @@ namespace stockInfoApi.DAL.ControllerFeatures
         // </summary>
         public async Task<IEnumerable<AccountDbo>> GetAllAccounts()
         {
-            var accounts = await _context.Accounts.ToListAsync();
+            List<AccountDbo> accounts = await _context.Accounts.ToListAsync();
             return accounts;
         }
 
@@ -31,11 +30,11 @@ namespace stockInfoApi.DAL.ControllerFeatures
         // </summary>
         public async Task<AccountDbo> GetAccountById(Guid id)
         {
-            var account = await _context.Accounts.FindAsync(id);
+            AccountDbo account = await _context.Accounts.FindAsync(id);
 
             if (account == null)
                 return null;
-            return null;
+            return account;
         }
 
         // <summary>
@@ -43,13 +42,15 @@ namespace stockInfoApi.DAL.ControllerFeatures
         // </summary>
         public async Task<AccountDbo> UpdateAccount(Guid id, PutAccountDto body)
         {
-            var validDto = DtoValidations.ValidPutAccountDto(body);
-            if (validDto.Error)
+            // find account by email to ensure you arent using duplicated emails
+            List<AccountDbo> existingAccounts = await _context.Accounts.Where(x => x.EmailAddress == body.EmailAddress).ToListAsync();
+            foreach(AccountDbo existingAccount in existingAccounts)
             {
-                return null;
+                if (existingAccount.AccountId != id)
+                    return existingAccount;
             }
 
-            var account = await _context.Accounts.FindAsync(id);
+            AccountDbo account = await _context.Accounts.FindAsync(id);
             if (account == null)
             {
             return account;
@@ -79,7 +80,6 @@ namespace stockInfoApi.DAL.ControllerFeatures
                     throw;
                 }
             }
-
             return account;
         }
 
@@ -88,12 +88,6 @@ namespace stockInfoApi.DAL.ControllerFeatures
         // </summary>
         public async Task<AccountDbo> CreateAccount(PostAccountDto account)
         {
-            var validDto = DtoValidations.ValidPostAccountDto(account);
-            if (validDto.Error)
-            {
-                return null;
-            }
-
             var existingAccount = AccountAlreadyExists(account.EmailAddress);
             if (existingAccount)
             {
@@ -118,22 +112,21 @@ namespace stockInfoApi.DAL.ControllerFeatures
 
             return newAccount;
         }
-
         // <summary>
         // Delete an account from the Accounts Table
         // </summary>
         public async Task<AccountDbo> DeleteAccount(Guid id)
         {
-            var accountDbo = await _context.Accounts.FindAsync(id);
-            if (accountDbo == null)
+            AccountDbo account = await _context.Accounts.FindAsync(id);
+            if (account == null)
             {
                 return null;
             }
 
-            _context.Accounts.Remove(accountDbo);
+            _context.Accounts.Remove(account);
             await _context.SaveChangesAsync();
 
-            return null;
+            return account;
         }
 
         // <summary>

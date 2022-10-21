@@ -1,11 +1,5 @@
 ﻿using stockInfoApi.Models.AccountDtos;
 using stockInfoApi.Models.DboModels;
-using stockInfoApi.Models.ResponseDtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace stockInfoApi.DAL.Interfaces
 {

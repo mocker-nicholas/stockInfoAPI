@@ -1,6 +1,7 @@
 ﻿using stockInfoApi.Core.Models.ResponseDtos;
 using stockInfoApi.Core.Validations;
 using stockInfoApi.Models.AccountDtos;
+using stockInfoApi.Models.DboModels;
 
 namespace stockInfoApi.Helpers
 {

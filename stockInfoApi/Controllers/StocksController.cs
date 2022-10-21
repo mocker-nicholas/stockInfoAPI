@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using stockInfoApi.Data;
 using stockInfoApi.Helpers;
 using stockInfoApi.Models.DboModels;
-using stockInfoApi.Models.ResponseDtos;
+using stockInfoApi.DAL.ResponseDtos;
 using stockInfoApi.Models.StockDtos;
 using stockInfoApi.Models.YFDto;
 using static stockInfoApi.Helpers.Enums;
