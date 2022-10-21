@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
-using static stockInfoApi.Helpers.Enums;
+using static stockInfoApi.DAL.Enums.Enums;
 
 namespace stockInfoApi.Models.AccountDtos
 {

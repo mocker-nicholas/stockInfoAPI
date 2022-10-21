@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using stockInfoApi.Data;
-using stockInfoApi.Helpers;
-using stockInfoApi.Models.DboModels;
-using stockInfoApi.DAL.ResponseDtos;
+using stockInfoApi.DAL.Data;
+using stockInfoApi.DAL.Enums;
+using static stockInfoApi.DAL.Enums.Enums;
+using stockInfoApi.DAL.Models.DboModels;
+using stockInfoApi.DAL.Models.ResponseDtos;
+using stockInfoApi.DAL.Models.YFDto;
+using stockInfoApi.DAL.Services;
 using stockInfoApi.Models.StockDtos;
-using stockInfoApi.Models.YFDto;
-using static stockInfoApi.Helpers.Enums;
 
 namespace stockInfoApi.Controllers
 {

@@ -1,8 +1,9 @@
 ﻿using stockInfoApi.DAL.Models.ResponseDtos;
-using stockInfoApi.Models.AccountDtos;
-using static stockInfoApi.DAL.Enums.Enums;
+using stockInfoApi.Core.Validations;
+using stockInfoApi.DAL.Models.AccountDtos;
+using stockInfoApi.DAL.Enums;
 
-namespace stockInfoApi.DAL.Validations
+namespace stockInfoApi.Helpers
 {
     public class DtoValidations
     {
@@ -10,7 +11,7 @@ namespace stockInfoApi.DAL.Validations
         {
             var email = PropertyValidations.ValidEmail(req.EmailAddress);
             var nickname = PropertyValidations.ValidNickname(req.Nickname);
-            var accountType = AccountTypeIsValid((int)req.AccountType);
+            var accountType = Enums.AccountTypeIsValid((int)req.AccountType);
             if (!email)
                 return new ValidationCheck(true, "Invalid email address");
             else if (!nickname)
@@ -25,7 +26,7 @@ namespace stockInfoApi.DAL.Validations
         {
             var email = PropertyValidations.ValidEmail(req.EmailAddress);
             var nickname = PropertyValidations.ValidNickname(req.Nickname);
-            var accountType = AccountTypeIsValid((int)req.AccountType);
+            var accountType = Enums.AccountTypeIsValid((int)req.AccountType);
             if (!email)
                 return new ValidationCheck(true, "Invalid email address");
             else if (!nickname)

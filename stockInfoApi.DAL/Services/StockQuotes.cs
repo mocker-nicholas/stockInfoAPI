@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
-using stockInfoApi.DAL.Models.YFDto;
+using stockInfoApi.DAL.YFDto;
 
-namespace stockInfoApi.DAL.Services
+namespace stockInfoApi.Helpers
 {
     public class StockQuotes
     {

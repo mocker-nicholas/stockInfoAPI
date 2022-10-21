@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-namespace stockInfoApi.DAL.Models.YFDto
+namespace stockInfoApi.DAL.YFDto
 {
     public class QuoteDto
     {

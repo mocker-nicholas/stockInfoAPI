@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using stockInfoApi.DAL.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using stockInfoApi.DAL.YFDto;
 
 namespace stockInfoApi.DAL.Models.YFDto
 {

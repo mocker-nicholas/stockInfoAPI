@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using stockInfoApi.DAL.Data;
 using stockInfoApi.DAL.Interfaces;
+using stockInfoApi.DAL.Data;
+using stockInfoApi.DAL.Models.AccountDtos;
 using stockInfoApi.DAL.Models.DboModels;
-using stockInfoApi.Models.AccountDtos;
 
 namespace stockInfoApi.DAL.ControllerFeatures
 {

@@ -1,4 +1,4 @@
-﻿using stockInfoApi.Models.AccountDtos;
+﻿using stockInfoApi.DAL.Models.AccountDtos;
 using stockInfoApi.DAL.Models.DboModels;
 
 namespace stockInfoApi.DAL.Interfaces

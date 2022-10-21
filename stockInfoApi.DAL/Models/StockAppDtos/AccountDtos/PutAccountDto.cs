@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
-namespace stockInfoApi.Models.AccountDtos
+namespace stockInfoApi.DAL.Models.AccountDtos
 {
     public class PutAccountDto
     {

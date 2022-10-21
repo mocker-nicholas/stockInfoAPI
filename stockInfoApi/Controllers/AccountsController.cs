@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.Models.AccountDtos;
-using stockInfoApi.Models.DboModels;
-using stockInfoApi.DAL.ResponseDtos;
-using stockInfoApi.Helpers;
-using stockInfoApi.Core.Models.ResponseDtos;
+using stockInfoApi.DAL.Models.DboModels;
+using stockInfoApi.DAL.Models.ResponseDtos;
+using stockInfoApi.DAL.Validations;
 
 namespace stockInfoApi.Controllers
 {

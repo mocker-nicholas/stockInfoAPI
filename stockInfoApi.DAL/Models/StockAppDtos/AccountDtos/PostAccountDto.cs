@@ -1,13 +1,15 @@
-﻿using static stockInfoApi.DAL.Enums.Enums;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
+using static stockInfoApi.DAL.Enums.Enums;
 
-namespace stockInfoApi.Models.AccountDtos
+namespace stockInfoApi.DAL.Models.AccountDtos
 {
-    public class PutAccountDto
+    public class PostAccountDto
     {
         [Required]
         [JsonProperty("accountType")]
+        [JsonConverter(typeof(StringEnumConverter))] // Tell the route this is coming in as a string
         public AccountType AccountType { get; set; }
 
         [Required]

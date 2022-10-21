@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using stockInfoApi.Core.Interfaces;
-using stockInfoApi.DAL.ControllerFeatures;
 using stockInfoApi.DAL.Interfaces;
-using stockInfoApi.Data;
-using stockInfoApi.Models.DboModels;
+using stockInfoApi.DAL.ControllerFeatures;
+using stockInfoApi.DAL.Data;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);

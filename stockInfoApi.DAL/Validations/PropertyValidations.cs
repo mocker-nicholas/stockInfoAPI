@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace stockInfoApi.DAL.Validations
+namespace stockInfoApi.Core.Validations
 {
     internal class PropertyValidations
     {
