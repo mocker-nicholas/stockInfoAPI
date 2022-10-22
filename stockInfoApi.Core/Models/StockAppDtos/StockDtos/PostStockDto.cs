@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
 using static stockInfoApi.DAL.Enums.Enums;
 
-namespace stockInfoApi.Models.StockDtos
+namespace stockInfoApi.DAL.Models.StockDtos
 {
     public class PostStockDto
     {

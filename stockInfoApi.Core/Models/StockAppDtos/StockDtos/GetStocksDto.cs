@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace stockInfoApi.Models.StockDtos
+namespace stockInfoApi.DAL.Models.StockDtos
 {
     public class GetStocksDto
     {

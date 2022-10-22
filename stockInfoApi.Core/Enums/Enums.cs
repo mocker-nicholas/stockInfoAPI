@@ -12,7 +12,6 @@
         {
             Buy = 0,
             Sell = 1,
-            Limit = 2,
         }
 
         public static bool AccountTypeIsValid(int num)

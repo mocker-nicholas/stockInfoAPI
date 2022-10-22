@@ -1,4 +1,4 @@
-﻿namespace stockInfoApi.Models.StockDto
+﻿namespace stockInfoApi.DAL.Models.StockDto
 {
     public class TrendingStocksDto
     {
