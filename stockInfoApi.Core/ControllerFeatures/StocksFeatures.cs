@@ -53,27 +53,41 @@ namespace stockInfoApi.DAL.ControllerFeatures
             StockDbo existingStock
         )
         {
-            if (postStockDto.TranType == Enums.Enums.TransactionType.Buy)
-            {
-                StockTransactionDbo transaction = await BuyStock(
+            StockTransactionDbo transaction = postStockDto.TranType == TransactionType.Buy ?
+                await BuyStock(
                     postStockDto,
                     account,
                     quoteData,
                     existingStock
-                );
-                return transaction;
-            }
-            if (postStockDto.TranType == TransactionType.Sell)
-            {
-                StockTransactionDbo transaction = await SellStock(
+                ) :
+                await SellStock(
                     postStockDto,
                     account,
                     quoteData,
                     existingStock
                  );
-                return transaction;
-            }
-            return null;
+            return transaction;
+            //if (postStockDto.TranType == TransactionType.Buy)
+            //{
+            //    StockTransactionDbo transaction = await BuyStock(
+            //        postStockDto,
+            //        account,
+            //        quoteData,
+            //        existingStock
+            //    );
+            //    return transaction;
+            //}
+            //if (postStockDto.TranType == TransactionType.Sell)
+            //{
+            //    StockTransactionDbo transaction = await SellStock(
+            //        postStockDto,
+            //        account,
+            //        quoteData,
+            //        existingStock
+            //     );
+            //    return transaction;
+            //}
+            //return null;
         }
 
         /// <summary>
