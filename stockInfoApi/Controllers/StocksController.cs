@@ -1,16 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
-using Microsoft.EntityFrameworkCore;
 using stockInfoApi.DAL.Data;
-using stockInfoApi.DAL.Enums;
-using static stockInfoApi.DAL.Enums.Enums;
+using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.DAL.Models.DboModels;
 using stockInfoApi.DAL.Models.ResponseDtos;
-using stockInfoApi.DAL.Models.YFDto;
-using stockInfoApi.DAL.Services;
 using stockInfoApi.DAL.Models.StockDtos;
-using stockInfoApi.DAL.Interfaces;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using stockInfoApi.DAL.Models.YFDto;
 
 namespace stockInfoApi.Controllers
 {
@@ -24,8 +19,8 @@ namespace stockInfoApi.Controllers
         private readonly IAccountFeatures _accountFeatures;
 
         public StocksController(
-            DevDbContext context, 
-            IConfiguration config, 
+            DevDbContext context,
+            IConfiguration config,
             IStocksFeatures stockFeatures,
             IAccountFeatures accountFeatures
 
@@ -44,9 +39,9 @@ namespace stockInfoApi.Controllers
         public async Task<IActionResult> GetStocks(GetStocksDto getStocksDto)
         {
             IEnumerable<StockDbo> stocks = await _stockFeatures.GetAllStocks(getStocksDto);
-            if(!stocks.Any())
+            if (!stocks.Any())
             {
-              return NotFound(new ResponseMessageDto<StockDbo>("error", "no stocks found"));
+                return NotFound(new ResponseMessageDto<StockDbo>("error", "no stocks found"));
             }
             return Ok(new ResponseMessageDto<IEnumerable<StockDbo>>("success", "success", stocks));
         }
@@ -58,7 +53,7 @@ namespace stockInfoApi.Controllers
         public async Task<IActionResult> GetStockBySymbol(string symbol)
         {
             Result result = await _stockFeatures.GetStockBySymbol(symbol);
-            if(result != null)
+            if (result != null)
             {
                 return NotFound(new ResponseMessageDto<StockDbo>("error", "no stocks found"));
             }
@@ -86,17 +81,17 @@ namespace stockInfoApi.Controllers
                 quoteData,
                 existingStock
             );
-            if(transactionIsValid.Error)
+            if (transactionIsValid.Error)
             {
                 return BadRequest(new ResponseMessageDto<ValidationCheck>("error", transactionIsValid.Message));
             }
 
-            StockTransactionDbo transaction = 
+            StockTransactionDbo transaction =
                 await _stockFeatures.CreateStockTransaction(
-            postStockDto,
-            account,
-            quoteData,
-            existingStock
+                postStockDto,
+                account,
+                quoteData,
+                existingStock
             );
             return Ok(new ResponseMessageDto<StockTransactionDbo>("success", "success", transaction));
         }

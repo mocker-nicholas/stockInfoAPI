@@ -4,15 +4,9 @@ using stockInfoApi.DAL.Data;
 using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.DAL.Models.DboModels;
 using stockInfoApi.DAL.Models.ResponseDtos;
-using stockInfoApi.DAL.Enums;
 using stockInfoApi.DAL.Models.StockDtos;
 using stockInfoApi.DAL.Models.YFDto;
 using stockInfoApi.DAL.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static stockInfoApi.DAL.Enums.Enums;
 
 namespace stockInfoApi.DAL.ControllerFeatures
@@ -59,69 +53,32 @@ namespace stockInfoApi.DAL.ControllerFeatures
             StockDbo existingStock
         )
         {
-           /// <summary>
-           /// Buy a new stock or add existing shares
-           /// </summary>
             if (postStockDto.TranType == Enums.Enums.TransactionType.Buy)
             {
-                if (existingStock == null)
-                {
-                    StockDbo newStock = new StockDbo(
-                        account.AccountId,
-                        postStockDto.Symbol,
-                        quoteData.Ask * postStockDto.NumShares,
-                        postStockDto.NumShares
-                    );
-                    _context.Stocks.Add(newStock);
-                    await _context.SaveChangesAsync();
-                    StockTransactionDbo transaction = new StockTransactionDbo(
-                        newStock.AccountId,
-                        newStock.Symbol,
-                        newStock.NumShares,
-                        postStockDto.TranType,
-                        quoteData.Ask
-                    );
-                    return transaction;
-                }
-                else
-                {
-                    existingStock.NumShares += postStockDto.NumShares;
-                    existingStock.TotalHoldings += postStockDto.NumShares * quoteData.Ask;
-                    await _context.SaveChangesAsync();
-                    StockTransactionDbo transaction = new StockTransactionDbo(
-                        existingStock.AccountId,
-                        existingStock.Symbol,
-                        postStockDto.NumShares,
-                        postStockDto.TranType,
-                        quoteData.Ask
-                    );
-                    return transaction;
-                }
+                StockTransactionDbo transaction = await BuyStock(
+                    postStockDto,
+                    account,
+                    quoteData,
+                    existingStock
+                );
+                return transaction;
             }
-            /// <summary>
-            /// Sell a stock and subtract from existing shares
-            /// </summary>
             if (postStockDto.TranType == TransactionType.Sell)
             {
-                existingStock.NumShares -= postStockDto.NumShares;
-                existingStock.TotalHoldings -= postStockDto.NumShares * quoteData.Ask;
-                if(existingStock.NumShares == 0)
-                {
-                    _context.Stocks.Remove(existingStock);
-                }
-                await _context.SaveChangesAsync();
-                StockTransactionDbo transaction = new StockTransactionDbo(
-                    existingStock.AccountId,
-                    existingStock.Symbol,
-                    postStockDto.NumShares,
-                    postStockDto.TranType,
-                    quoteData.Ask
-                );
+                StockTransactionDbo transaction = await SellStock(
+                    postStockDto,
+                    account,
+                    quoteData,
+                    existingStock
+                 );
                 return transaction;
             }
             return null;
         }
 
+        /// <summary>
+        /// Helper methods for Stock Features
+        /// </summary>
         public ValidationCheck TransactionValidation(
             PostStockDto postStockDto,
             AccountDbo account,
@@ -142,7 +99,7 @@ namespace stockInfoApi.DAL.ControllerFeatures
                 account.Balance < (quoteData.Ask * postStockDto.NumShares)
             )
             {
-               return new ValidationCheck(true, "Insufficient funds");
+                return new ValidationCheck(true, "Insufficient funds");
             }
             if (
                 (postStockDto.TranType == TransactionType.Sell &&
@@ -160,11 +117,77 @@ namespace stockInfoApi.DAL.ControllerFeatures
             List<StockDbo> stock = await _context.Stocks.Where(
                 x => x.Symbol == symbol && x.AccountId == accountId
             ).ToListAsync();
-            if(stock.Count == 0)
+            if (stock.Count == 0)
             {
                 return null;
             }
             return stock[0];
+        }
+
+        public async Task<StockTransactionDbo> BuyStock(
+            PostStockDto postStockDto,
+            AccountDbo account,
+            Result quoteData,
+            StockDbo existingStock
+            )
+        {
+            if (existingStock == null)
+            {
+                StockDbo newStock = new StockDbo(
+                    account.AccountId,
+                    postStockDto.Symbol,
+                    quoteData.Ask * postStockDto.NumShares,
+                    postStockDto.NumShares
+                );
+                _context.Stocks.Add(newStock);
+                await _context.SaveChangesAsync();
+                StockTransactionDbo transaction = new StockTransactionDbo(
+                    newStock.AccountId,
+                    newStock.Symbol,
+                    newStock.NumShares,
+                    postStockDto.TranType,
+                    quoteData.Ask
+                );
+                return transaction;
+            }
+            else
+            {
+                existingStock.NumShares += postStockDto.NumShares;
+                existingStock.TotalHoldings += postStockDto.NumShares * quoteData.Ask;
+                await _context.SaveChangesAsync();
+                StockTransactionDbo transaction = new StockTransactionDbo(
+                    existingStock.AccountId,
+                    existingStock.Symbol,
+                    postStockDto.NumShares,
+                    postStockDto.TranType,
+                    quoteData.Ask
+                );
+                return transaction;
+            }
+        }
+
+        public async Task<StockTransactionDbo> SellStock(
+                    PostStockDto postStockDto,
+                    AccountDbo account,
+                    Result quoteData,
+                    StockDbo existingStock
+            )
+        {
+            existingStock.NumShares -= postStockDto.NumShares;
+            existingStock.TotalHoldings -= postStockDto.NumShares * quoteData.Ask;
+            if (existingStock.NumShares == 0)
+            {
+                _context.Stocks.Remove(existingStock);
+            }
+            await _context.SaveChangesAsync();
+            StockTransactionDbo transaction = new StockTransactionDbo(
+                existingStock.AccountId,
+                existingStock.Symbol,
+                postStockDto.NumShares,
+                postStockDto.TranType,
+                quoteData.Ask
+            );
+            return transaction;
         }
     }
 }
