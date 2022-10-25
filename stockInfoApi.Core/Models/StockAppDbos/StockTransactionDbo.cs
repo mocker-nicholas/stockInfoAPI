@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Converters;
 using stockInfoApi.DAL.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using static stockInfoApi.DAL.Enums.Enums;
 
 namespace stockInfoApi.DAL.Models.DboModels
@@ -12,6 +13,7 @@ namespace stockInfoApi.DAL.Models.DboModels
         [JsonProperty("transactionId")]
         public Guid TransactionId { get; set; } = Guid.NewGuid();
 
+        [ForeignKey("AccountDbo")]
         [JsonProperty("accountId")]
         public Guid AccountId { get; set; }
 
@@ -36,10 +38,10 @@ namespace stockInfoApi.DAL.Models.DboModels
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public StockTransactionDbo(
-            Guid accountId, 
-            string symbol, 
-            int numShares, 
-            TransactionType tranType, 
+            Guid accountId,
+            string symbol,
+            int numShares,
+            TransactionType tranType,
             double sharePrice
          )
         {

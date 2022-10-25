@@ -23,6 +23,6 @@ namespace stockInfoApi.DAL.Data
 
         public DbSet<AccountDbo> Accounts { get; set; }
         public DbSet<StockDbo> Stocks { get; set; }
-        public DbSet <StockTransactionDbo> Transactions { get; set; }
-}
+        public DbSet<StockTransactionDbo> Transactions { get; set; }
+    }
 }

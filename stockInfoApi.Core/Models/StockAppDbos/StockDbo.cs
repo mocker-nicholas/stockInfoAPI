@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using stockInfoApi.DAL.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,8 +9,6 @@ namespace stockInfoApi.DAL.Models.DboModels
         [Key]
         [JsonProperty("stockId")]
         public Guid StockId { get; set; } = Guid.NewGuid();
-
-        public AccountDbo? AccountDbo { get; set; }
 
         [Required]
         [JsonProperty("accountId")]

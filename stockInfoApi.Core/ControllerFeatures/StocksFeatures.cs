@@ -154,7 +154,6 @@ namespace stockInfoApi.DAL.ControllerFeatures
                     postStockDto.NumShares
                 );
                 _context.Stocks.Add(newStock);
-                await _context.SaveChangesAsync();
                 StockTransactionDbo transaction = new StockTransactionDbo(
                     newStock.AccountId,
                     newStock.Symbol,
@@ -162,13 +161,14 @@ namespace stockInfoApi.DAL.ControllerFeatures
                     postStockDto.TranType,
                     quoteData.Ask
                 );
+                _context.Transactions.Add(transaction);
+                await _context.SaveChangesAsync();
                 return transaction;
             }
             else
             {
                 existingStock.NumShares += postStockDto.NumShares;
                 existingStock.TotalHoldings += postStockDto.NumShares * quoteData.Ask;
-                await _context.SaveChangesAsync();
                 StockTransactionDbo transaction = new StockTransactionDbo(
                     existingStock.AccountId,
                     existingStock.Symbol,
@@ -176,6 +176,8 @@ namespace stockInfoApi.DAL.ControllerFeatures
                     postStockDto.TranType,
                     quoteData.Ask
                 );
+                _context.Transactions.Add(transaction);
+                await _context.SaveChangesAsync();
                 return transaction;
             }
         }
@@ -193,7 +195,6 @@ namespace stockInfoApi.DAL.ControllerFeatures
             {
                 _context.Stocks.Remove(existingStock);
             }
-            await _context.SaveChangesAsync();
             StockTransactionDbo transaction = new StockTransactionDbo(
                 existingStock.AccountId,
                 existingStock.Symbol,
@@ -201,6 +202,8 @@ namespace stockInfoApi.DAL.ControllerFeatures
                 postStockDto.TranType,
                 quoteData.Ask
             );
+            _context.Transactions.Add(transaction);
+            await _context.SaveChangesAsync();
             return transaction;
         }
     }
