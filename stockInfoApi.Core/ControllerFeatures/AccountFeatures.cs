@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using stockInfoApi.DAL.Data;
 using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.DAL.Models.DboModels;
 using stockInfoApi.Models.AccountDtos;
@@ -8,9 +7,9 @@ namespace stockInfoApi.DAL.ControllerFeatures
 {
     public class AccountFeatures : IAccountFeatures
     {
-        private readonly DevDbContext _context;
+        private readonly IDevDbContext _context;
 
-        public AccountFeatures(DevDbContext context)
+        public AccountFeatures(IDevDbContext context)
         {
             _context = context;
         }
@@ -43,7 +42,7 @@ namespace stockInfoApi.DAL.ControllerFeatures
         {
             // find account by email to ensure you arent using duplicated emails
             List<AccountDbo> existingAccounts = await _context.Accounts.Where(x => x.EmailAddress == body.EmailAddress).ToListAsync();
-            foreach(AccountDbo existingAccount in existingAccounts)
+            foreach (AccountDbo existingAccount in existingAccounts)
             {
                 if (existingAccount.AccountId != id)
                     return existingAccount;
@@ -52,7 +51,7 @@ namespace stockInfoApi.DAL.ControllerFeatures
             AccountDbo account = await _context.Accounts.FindAsync(id);
             if (account == null)
             {
-            return account;
+                return account;
             }
 
             account.AccountType = body.AccountType;
