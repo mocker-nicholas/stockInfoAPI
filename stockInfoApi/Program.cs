@@ -17,7 +17,6 @@ builder.Services.AddDbContext<DevDbContext>(options =>
 });
 
 // Add something to IOC singlton = 1, scoped = per req, transient = every reference
-builder.Services.AddScoped<IDevDbContext, DevDbContext>();
 builder.Services.AddScoped<IAccountFeatures, AccountFeatures>();
 builder.Services.AddScoped<IStocksFeatures, StocksFeatures>();
 builder.Services.AddScoped<ITransactionsFeatures, TransactionsFeatures>();

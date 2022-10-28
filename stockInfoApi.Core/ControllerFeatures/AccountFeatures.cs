@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using stockInfoApi.DAL.Data;
 using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.DAL.Models.DboModels;
 using stockInfoApi.Models.AccountDtos;
@@ -7,9 +8,9 @@ namespace stockInfoApi.DAL.ControllerFeatures
 {
     public class AccountFeatures : IAccountFeatures
     {
-        private readonly IDevDbContext _context;
+        private readonly DevDbContext _context;
 
-        public AccountFeatures(IDevDbContext context)
+        public AccountFeatures(DevDbContext context)
         {
             _context = context;
         }
@@ -28,7 +29,7 @@ namespace stockInfoApi.DAL.ControllerFeatures
         // </summary>
         public async Task<AccountDbo> GetAccountById(Guid id)
         {
-            AccountDbo account = await _context.Accounts.FindAsync(id);
+            AccountDbo account = await _context.Accounts.FirstOrDefaultAsync(x => id == x.AccountId);
 
             if (account == null)
                 return null;
