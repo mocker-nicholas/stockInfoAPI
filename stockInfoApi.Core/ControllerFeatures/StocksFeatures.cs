@@ -89,7 +89,7 @@ namespace stockInfoApi.DAL.ControllerFeatures
             }
             if (
                 postStockDto.TranType == TransactionType.Buy &&
-                account.Balance < (quoteData.Ask * postStockDto.NumShares)
+                account.Cash < (quoteData.Ask * postStockDto.NumShares)
             )
             {
                 return new ValidationCheck(true, "Insufficient funds");
@@ -124,17 +124,17 @@ namespace stockInfoApi.DAL.ControllerFeatures
             StockDbo existingStock
             )
         {
-            account.Balance -= (quoteData.Ask * postStockDto.NumShares);
+            account.Cash -= Math.Round((quoteData.Ask * postStockDto.NumShares), 2, MidpointRounding.AwayFromZero);
             if (existingStock == null)
             {
-                StockDbo newStock = new StockDbo(
+                StockDbo newStock = new(
                     account.AccountId,
                     postStockDto.Symbol,
                     quoteData.Ask * postStockDto.NumShares,
                     postStockDto.NumShares
                 );
                 _context.Stocks.Add(newStock);
-                StockTransactionDbo transaction = new StockTransactionDbo(
+                StockTransactionDbo transaction = new(
                     newStock.AccountId,
                     newStock.Symbol,
                     newStock.NumShares,
@@ -149,7 +149,7 @@ namespace stockInfoApi.DAL.ControllerFeatures
             {
                 existingStock.NumShares += postStockDto.NumShares;
                 existingStock.TotalHoldings += postStockDto.NumShares * quoteData.Ask;
-                StockTransactionDbo transaction = new StockTransactionDbo(
+                StockTransactionDbo transaction = new(
                     existingStock.AccountId,
                     existingStock.Symbol,
                     postStockDto.NumShares,
@@ -169,14 +169,14 @@ namespace stockInfoApi.DAL.ControllerFeatures
                     StockDbo existingStock
             )
         {
-            account.Balance += (quoteData.Ask * postStockDto.NumShares);
+            account.Cash += Math.Round((quoteData.Ask * postStockDto.NumShares), 2, MidpointRounding.AwayFromZero);
             existingStock.NumShares -= postStockDto.NumShares;
             existingStock.TotalHoldings -= postStockDto.NumShares * quoteData.Ask;
             if (existingStock.NumShares == 0)
             {
                 _context.Stocks.Remove(existingStock);
             }
-            StockTransactionDbo transaction = new StockTransactionDbo(
+            StockTransactionDbo transaction = new(
                 existingStock.AccountId,
                 existingStock.Symbol,
                 postStockDto.NumShares,

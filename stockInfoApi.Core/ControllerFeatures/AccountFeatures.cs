@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using stockInfoApi.DAL.Data;
 using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.DAL.Models.DboModels;
+using stockInfoApi.DAL.Models.YFDto;
+using stockInfoApi.DAL.Services;
 using stockInfoApi.Models.AccountDtos;
 
 namespace stockInfoApi.DAL.ControllerFeatures
@@ -9,10 +12,13 @@ namespace stockInfoApi.DAL.ControllerFeatures
     public class AccountFeatures : IAccountFeatures
     {
         private readonly DevDbContext _context;
-
-        public AccountFeatures(DevDbContext context)
+        private readonly IConfiguration _config;
+        private readonly StockQuotes _request;
+        public AccountFeatures(DevDbContext context, IConfiguration config, StockQuotes request)
         {
             _context = context;
+            _config = config;
+            _request = request;
         }
 
         // <summary>
@@ -33,6 +39,7 @@ namespace stockInfoApi.DAL.ControllerFeatures
 
             if (account == null)
                 return null;
+            await GetUpToDateData(id);
             return account;
         }
 
@@ -143,6 +150,26 @@ namespace stockInfoApi.DAL.ControllerFeatures
             if (existingAccount.Any())
                 return true;
             return false;
+        }
+
+        private async Task GetUpToDateData(Guid id)
+        {
+            AccountDbo account = await _context.Accounts.FirstOrDefaultAsync(x => id == x.AccountId);
+            List<StockDbo> stocks = await (from Stock in _context.Stocks
+                                           where Stock.AccountId == id
+                                           select Stock).ToListAsync();
+            if (stocks.Any())
+            {
+                foreach (StockDbo stock in stocks)
+                {
+                    QuoteDto details = await _request.NewQuote(_config["YF_BASE_URL"], _config["YF_API_KEY"], stock.Symbol);
+                    Result result = details.QuoteResponse.Result[0];
+                    stock.TotalHoldings = result.Ask * stock.NumShares;
+                }
+
+                account.StockHoldings = Math.Round(stocks.Aggregate((double)0, (curr, accum) => curr + accum.TotalHoldings), 2, MidpointRounding.AwayFromZero);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

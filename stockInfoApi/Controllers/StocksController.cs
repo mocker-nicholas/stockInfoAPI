@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis;
 using stockInfoApi.DAL.Data;
 using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.DAL.Models.DboModels;
@@ -39,7 +38,7 @@ namespace stockInfoApi.Controllers
         public async Task<IActionResult> GetStocks(GetStocksDto getStocksDto)
         {
             IEnumerable<StockDbo> stocks = await _stockFeatures.GetAllStocks(getStocksDto);
-            if (!stocks.Any())
+            if (stocks == null)
             {
                 return NotFound(new ResponseMessageDto<StockDbo>("error", "no stocks found"));
             }

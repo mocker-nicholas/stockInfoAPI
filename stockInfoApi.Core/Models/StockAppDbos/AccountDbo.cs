@@ -29,9 +29,11 @@ namespace stockInfoApi.DAL.Models.DboModels
 
         [JsonProperty("nickname")]
         public string Nickname { get; set; } = "";
+        [JsonProperty("cash")]
+        public double Cash { get; set; } = 10000;
 
-        [JsonProperty("balance")]
-        public double Balance { get; set; } = 10000;
+        [JsonProperty("stockHoldings")]
+        public double StockHoldings { get; set; } = 0;
 
         [JsonProperty("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
