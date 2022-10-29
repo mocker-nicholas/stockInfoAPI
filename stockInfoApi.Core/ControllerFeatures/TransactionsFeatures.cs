@@ -15,7 +15,10 @@ namespace stockInfoApi.DAL.ControllerFeatures
         }
         public async Task<List<StockTransactionDbo>> GetAllTransactionsForAccount(Guid accountId)
         {
-            List<StockTransactionDbo> transactions = await _context.Transactions.Where(x => x.AccountId == accountId).ToListAsync();
+            List<StockTransactionDbo> transactions = await (from Transaction in _context.Transactions
+                                                            where Transaction.AccountId == accountId
+                                                            select Transaction).ToListAsync();
+            // await _context.Transactions.Where(x => x.AccountId == accountId).ToListAsync();
             return transactions;
         }
 

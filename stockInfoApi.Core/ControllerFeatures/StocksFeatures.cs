@@ -67,27 +67,6 @@ namespace stockInfoApi.DAL.ControllerFeatures
                     existingStock
                  );
             return transaction;
-            //if (postStockDto.TranType == TransactionType.Buy)
-            //{
-            //    StockTransactionDbo transaction = await BuyStock(
-            //        postStockDto,
-            //        account,
-            //        quoteData,
-            //        existingStock
-            //    );
-            //    return transaction;
-            //}
-            //if (postStockDto.TranType == TransactionType.Sell)
-            //{
-            //    StockTransactionDbo transaction = await SellStock(
-            //        postStockDto,
-            //        account,
-            //        quoteData,
-            //        existingStock
-            //     );
-            //    return transaction;
-            //}
-            //return null;
         }
 
         /// <summary>
@@ -145,6 +124,7 @@ namespace stockInfoApi.DAL.ControllerFeatures
             StockDbo existingStock
             )
         {
+            account.Balance -= (quoteData.Ask * postStockDto.NumShares);
             if (existingStock == null)
             {
                 StockDbo newStock = new StockDbo(
@@ -189,6 +169,7 @@ namespace stockInfoApi.DAL.ControllerFeatures
                     StockDbo existingStock
             )
         {
+            account.Balance += (quoteData.Ask * postStockDto.NumShares);
             existingStock.NumShares -= postStockDto.NumShares;
             existingStock.TotalHoldings -= postStockDto.NumShares * quoteData.Ask;
             if (existingStock.NumShares == 0)

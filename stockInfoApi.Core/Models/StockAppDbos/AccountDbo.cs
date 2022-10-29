@@ -31,7 +31,7 @@ namespace stockInfoApi.DAL.Models.DboModels
         public string Nickname { get; set; } = "";
 
         [JsonProperty("balance")]
-        public double Balance { get; } = 10000;
+        public double Balance { get; set; } = 10000;
 
         [JsonProperty("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -40,10 +40,10 @@ namespace stockInfoApi.DAL.Models.DboModels
         public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
 
         public AccountDbo(
-            AccountType accountType, 
-            string firstName, 
-            string lastName, 
-            string emailAddress, 
+            AccountType accountType,
+            string firstName,
+            string lastName,
+            string emailAddress,
             string nickname
             )
         {
