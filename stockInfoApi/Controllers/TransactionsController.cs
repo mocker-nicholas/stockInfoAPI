@@ -17,14 +17,23 @@ namespace stockInfoApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTransactions(GetTransactionDto getTransactionDto)
+        public async Task<IActionResult> GetTransactions(GetTransactionsDto getTransactionsDto)
         {
-            List<StockTransactionDbo> transactions = await _features.GetAllTransactions(getTransactionDto.AccountId);
+            List<StockTransactionDbo> transactions = await _features.GetAllTransactionsForAccount(getTransactionsDto.AccountId);
             if (!transactions.Any())
             {
                 return NotFound(new ResponseMessageDto<StockTransactionDbo>("error", "No transactions found"));
             }
             return Ok(new ResponseMessageDto<List<StockTransactionDbo>>("success", "success", transactions));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetTransactionById(Guid id, GetTransactionDto getTransactionDto)
+        {
+            StockTransactionDbo transaction = await _features.GetTransactionById(id, getTransactionDto);
+            if (transaction == null)
+                return NotFound(new ResponseMessageDto<StockTransactionDbo>("error", "No transaction found"));
+            return Ok(new ResponseMessageDto<StockTransactionDbo>("success", "success", transaction));
         }
     }
 }
