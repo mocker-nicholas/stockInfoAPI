@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using stockInfoApi.DAL.ControllerFeatures;
 using stockInfoApi.DAL.Data;
@@ -21,6 +22,9 @@ builder.Services.AddScoped<IAccountFeatures, AccountFeatures>();
 builder.Services.AddScoped<IStocksFeatures, StocksFeatures>();
 builder.Services.AddScoped<ITransactionsFeatures, TransactionsFeatures>();
 builder.Services.AddScoped<StockQuotes, StockQuotes>();
+
+// Looks for anything MediatR related
+builder.Services.AddMediatR(typeof(DevDbContext).Assembly);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
