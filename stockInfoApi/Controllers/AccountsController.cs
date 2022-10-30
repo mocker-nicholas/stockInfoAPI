@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.DAL.Models.DboModels;
 using stockInfoApi.DAL.Models.ResponseDtos;
-using stockInfoApi.DAL.Queries;
+using stockInfoApi.DAL.Queries.Accounts;
 using stockInfoApi.DAL.Validations;
 using stockInfoApi.Models.AccountDtos;
 
@@ -27,7 +27,6 @@ namespace stockInfoApi.Controllers
         public async Task<ActionResult<IEnumerable<AccountDbo>>> GetAccounts()
         {
             var accounts = await _mediator.Send(new GetAccountListQuery());
-            //var accounts = await _features.GetAllAccounts();
             if (accounts == null)
             {
                 return NotFound(new ResponseMessageDto<AccountDbo>("error", "No accounts found"));
@@ -39,7 +38,7 @@ namespace stockInfoApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AccountDbo>> GetAccountDbo(Guid id)
         {
-            var account = await _features.GetAccountById(id);
+            var account = await _mediator.Send(new GetAccountByIdQuery(id));
             if (account == null)
             {
                 return NotFound(new ResponseMessageDto<AccountDbo>("error", "No account found"));
@@ -57,7 +56,7 @@ namespace stockInfoApi.Controllers
                 return BadRequest(new ResponseMessageDto<AccountDbo>("error", $"{validDto.Error}"));
             }
 
-            AccountDbo account = await _features.UpdateAccount(id, putAccountDto);
+            AccountDbo account = await _mediator.Send(new UpdateAccountByIdQuery(id, putAccountDto));
             if (account == null)
             {
                 return NotFound(new ResponseMessageDto<AccountDbo>("error", "No Account Found"));

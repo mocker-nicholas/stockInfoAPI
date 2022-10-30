@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using stockInfoApi.DAL.Data;
 using stockInfoApi.DAL.Models.DboModels;
-using stockInfoApi.DAL.Queries;
+using stockInfoApi.DAL.Queries.Accounts;
 
-namespace stockInfoApi.DAL.Handlers
+namespace stockInfoApi.DAL.Handlers.Accounts
 {
     public class GetAccountListHandler : IRequestHandler<GetAccountListQuery, IEnumerable<AccountDbo>>
     {
