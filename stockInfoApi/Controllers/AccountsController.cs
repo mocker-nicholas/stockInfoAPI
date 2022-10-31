@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.DAL.Models.DboModels;
 using stockInfoApi.DAL.Models.ResponseDtos;
 using stockInfoApi.DAL.Queries.Accounts;
@@ -13,12 +12,10 @@ namespace stockInfoApi.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly IAccountFeatures _features;
         private readonly IMediator _mediator;
 
-        public AccountsController(IAccountFeatures features, IMediator mediator)
+        public AccountsController(IMediator mediator)
         {
-            _features = features;
             _mediator = mediator;
         }
 
@@ -79,7 +76,7 @@ namespace stockInfoApi.Controllers
                 return BadRequest(new ResponseMessageDto<AccountDbo>("error", $"{validDto.Error}"));
             }
 
-            AccountDbo account = await _features.CreateAccount(postAccountDto);
+            AccountDbo account = await _mediator.Send(new CreateAccountQuery(postAccountDto));
             if (account == null)
             {
                 return BadRequest(new ResponseMessageDto<AccountDbo>("error", "email already in use"));
@@ -91,7 +88,7 @@ namespace stockInfoApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAccountDbo(Guid id)
         {
-            AccountDbo account = await _features.DeleteAccount(id);
+            AccountDbo account = await _mediator.Send(new DeleteAccountByIdQuery(id));
             if (account == null)
             {
                 return Ok(new ResponseMessageDto<AccountDbo>("error", "No account found"));
