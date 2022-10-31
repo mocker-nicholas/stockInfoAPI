@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using stockInfoApi.DAL.Data;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.DAL.Models.DboModels;
 using stockInfoApi.DAL.Models.ResponseDtos;
 using stockInfoApi.DAL.Models.StockDtos;
 using stockInfoApi.DAL.Models.YFDto;
+using stockInfoApi.DAL.Queries.Accounts;
 
 namespace stockInfoApi.Controllers
 {
@@ -12,23 +13,17 @@ namespace stockInfoApi.Controllers
     [ApiController]
     public class StocksController : ControllerBase
     {
-        private readonly DevDbContext _context;
-        private readonly IConfiguration _config;
         private readonly IStocksFeatures _stockFeatures;
-        private readonly IAccountFeatures _accountFeatures;
+        private readonly IMediator _mediator;
 
         public StocksController(
-            DevDbContext context,
-            IConfiguration config,
             IStocksFeatures stockFeatures,
-            IAccountFeatures accountFeatures
+            IMediator mediator
 
         )
         {
-            _context = context;
-            _config = config;
             _stockFeatures = stockFeatures;
-            _accountFeatures = accountFeatures;
+            _mediator = mediator;
         }
 
         /// <summary>
@@ -66,7 +61,7 @@ namespace stockInfoApi.Controllers
         public async Task<IActionResult> StockTrans(PostStockDto postStockDto)
         {
             AccountDbo account =
-                await _accountFeatures.GetAccountById(postStockDto.AccountId);
+                await _mediator.Send(new GetAccountByIdQuery(postStockDto.AccountId));
             Result quoteData =
                 await _stockFeatures.GetStockBySymbol(postStockDto.Symbol);
             StockDbo existingStock =

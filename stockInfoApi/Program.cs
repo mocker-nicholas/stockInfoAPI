@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using stockInfoApi.DAL.ControllerFeatures;
 using stockInfoApi.DAL.Data;
@@ -17,10 +18,12 @@ builder.Services.AddDbContext<DevDbContext>(options =>
 });
 
 // Add something to IOC singlton = 1, scoped = per req, transient = every reference
-builder.Services.AddScoped<IAccountFeatures, AccountFeatures>();
 builder.Services.AddScoped<IStocksFeatures, StocksFeatures>();
 builder.Services.AddScoped<ITransactionsFeatures, TransactionsFeatures>();
 builder.Services.AddScoped<StockQuotes, StockQuotes>();
+
+// Looks for anything MediatR related
+builder.Services.AddMediatR(typeof(DevDbContext).Assembly);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });

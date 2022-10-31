@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using stockInfoApi.DAL.Interfaces;
-using stockInfoApi.Models.AccountDtos;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using stockInfoApi.DAL.Models.DboModels;
 using stockInfoApi.DAL.Models.ResponseDtos;
+using stockInfoApi.DAL.Queries.Accounts;
 using stockInfoApi.DAL.Validations;
+using stockInfoApi.Models.AccountDtos;
 
 namespace stockInfoApi.Controllers
 {
@@ -11,19 +12,19 @@ namespace stockInfoApi.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly IAccountFeatures _features;
+        private readonly IMediator _mediator;
 
-        public AccountsController(IAccountFeatures features)
+        public AccountsController(IMediator mediator)
         {
-            _features = features;
+            _mediator = mediator;
         }
 
         // GET: api/Accounts
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AccountDbo>>> GetAccounts()
         {
-            var accounts = await _features.GetAllAccounts();
-            if(accounts == null)
+            var accounts = await _mediator.Send(new GetAccountListQuery());
+            if (accounts == null)
             {
                 return NotFound(new ResponseMessageDto<AccountDbo>("error", "No accounts found"));
             }
@@ -34,7 +35,7 @@ namespace stockInfoApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AccountDbo>> GetAccountDbo(Guid id)
         {
-            var account = await _features.GetAccountById(id);
+            var account = await _mediator.Send(new GetAccountByIdQuery(id));
             if (account == null)
             {
                 return NotFound(new ResponseMessageDto<AccountDbo>("error", "No account found"));
@@ -52,13 +53,13 @@ namespace stockInfoApi.Controllers
                 return BadRequest(new ResponseMessageDto<AccountDbo>("error", $"{validDto.Error}"));
             }
 
-            AccountDbo account = await _features.UpdateAccount(id, putAccountDto);
-            if(account == null)
+            AccountDbo account = await _mediator.Send(new UpdateAccountByIdQuery(id, putAccountDto));
+            if (account == null)
             {
                 return NotFound(new ResponseMessageDto<AccountDbo>("error", "No Account Found"));
             }
 
-            if(account.AccountId != id)
+            if (account.AccountId != id)
             {
                 return BadRequest(new ResponseMessageDto<AccountDbo>("error", "email already in use"));
             }
@@ -75,8 +76,8 @@ namespace stockInfoApi.Controllers
                 return BadRequest(new ResponseMessageDto<AccountDbo>("error", $"{validDto.Error}"));
             }
 
-            AccountDbo account = await _features.CreateAccount(postAccountDto);
-            if(account == null)
+            AccountDbo account = await _mediator.Send(new CreateAccountQuery(postAccountDto));
+            if (account == null)
             {
                 return BadRequest(new ResponseMessageDto<AccountDbo>("error", "email already in use"));
             }
@@ -87,8 +88,8 @@ namespace stockInfoApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAccountDbo(Guid id)
         {
-            AccountDbo account = await _features.DeleteAccount(id);
-            if(account == null)
+            AccountDbo account = await _mediator.Send(new DeleteAccountByIdQuery(id));
+            if (account == null)
             {
                 return Ok(new ResponseMessageDto<AccountDbo>("error", "No account found"));
             }
