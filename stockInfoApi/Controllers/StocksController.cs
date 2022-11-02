@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using stockInfoApi.DAL.Interfaces;
 using stockInfoApi.DAL.Models.DboModels;
 using stockInfoApi.DAL.Models.ResponseDtos;
 using stockInfoApi.DAL.Models.StockDtos;
 using stockInfoApi.DAL.Models.YFDto;
 using stockInfoApi.DAL.Queries.Accounts;
+using stockInfoApi.DAL.Queries.Stocks;
 
 namespace stockInfoApi.Controllers
 {
@@ -13,16 +13,10 @@ namespace stockInfoApi.Controllers
     [ApiController]
     public class StocksController : ControllerBase
     {
-        private readonly IStocksFeatures _stockFeatures;
         private readonly IMediator _mediator;
 
-        public StocksController(
-            IStocksFeatures stockFeatures,
-            IMediator mediator
-
-        )
+        public StocksController(IMediator mediator)
         {
-            _stockFeatures = stockFeatures;
             _mediator = mediator;
         }
 
@@ -32,7 +26,7 @@ namespace stockInfoApi.Controllers
         [HttpGet()]
         public async Task<IActionResult> GetStocks(GetStocksDto getStocksDto)
         {
-            IEnumerable<StockDbo> stocks = await _stockFeatures.GetAllStocks(getStocksDto);
+            IEnumerable<StockDbo> stocks = await _mediator.Send(new GetStocksListQuery(getStocksDto));
             if (stocks == null)
             {
                 return NotFound(new ResponseMessageDto<StockDbo>("error", "no stocks found"));
@@ -46,8 +40,8 @@ namespace stockInfoApi.Controllers
         [HttpGet("{symbol}")]
         public async Task<IActionResult> GetStockBySymbol(string symbol)
         {
-            Result result = await _stockFeatures.GetStockBySymbol(symbol);
-            if (result != null)
+            Result result = await _mediator.Send(new GetStockBySymbolQuery(symbol));
+            if (result == null)
             {
                 return NotFound(new ResponseMessageDto<StockDbo>("error", "no stocks found"));
             }
@@ -63,17 +57,18 @@ namespace stockInfoApi.Controllers
             AccountDbo account =
                 await _mediator.Send(new GetAccountByIdQuery(postStockDto.AccountId));
             Result quoteData =
-                await _stockFeatures.GetStockBySymbol(postStockDto.Symbol);
+                await _mediator.Send(new GetStockBySymbolQuery(postStockDto.Symbol));
             StockDbo existingStock =
-                await _stockFeatures
-                .StockExists(postStockDto.AccountId, postStockDto.Symbol);
+                await _mediator
+                .Send(new StockExistsQuery(postStockDto.AccountId, postStockDto.Symbol));
 
             ValidationCheck transactionIsValid =
-                 _stockFeatures.TransactionValidation(
+                 await _mediator.Send(new TransactionIsValidQuery(
                 postStockDto,
                 account,
                 quoteData,
                 existingStock
+                )
             );
             if (transactionIsValid.Error)
             {
@@ -81,11 +76,12 @@ namespace stockInfoApi.Controllers
             }
 
             StockTransactionDbo transaction =
-                await _stockFeatures.CreateStockTransaction(
-                postStockDto,
-                account,
-                quoteData,
-                existingStock
+                await _mediator.Send(new CreateStockTransactionQuery(
+                    postStockDto,
+                    account,
+                    quoteData,
+                    existingStock
+                )
             );
             return Ok(new ResponseMessageDto<StockTransactionDbo>("success", "success", transaction));
         }
