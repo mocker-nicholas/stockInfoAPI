@@ -51,6 +51,5 @@ namespace stockInfoApi.DAL.Handlers.Accounts
                 await _context.SaveChangesAsync();
             }
         }
-
     }
 }
